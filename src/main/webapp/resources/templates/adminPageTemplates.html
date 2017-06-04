@@ -1,0 +1,144 @@
+<div ng-controller="adminViewController">
+	<div class="home-left-section">
+		<div class="user-info-section">
+			<i class="fa fa-5x fa-user user-icon"></i>
+			<div class="user-info-box">
+				<span class="home-user-name">{{UserData.userid}}</span><br>
+				<span class="home-user-role">{{UserData.userRole}}</span><br>
+			</div>
+			
+		</div>
+		<hr>
+		<div class="user-actions-section">
+			<!-- <button type="submit" ng-click="" class="btn btn-primary btn-create-migrate-job">Create Migrate Job</button> -->
+			Last Accessed : {{date | date}}
+		</div>
+	</div>
+	<div class="home-right-section"> <span class="admin-page-title">Current Nodes :</span> 
+	
+	<i class="fa fa-2x fa-refresh admin-page-refresh-btn static-refresh-btn clickable-el" title="Refresh Nodes" ng-click="refreshNodeData()" ng-hide="isRefreshing" aria-hidden="true"></i>
+	<i class="fa fa-2x fa-refresh admin-page-refresh-btn fa-spin fa-fw" title="Refreshing Nodes" ng-show="isRefreshing" aria-hidden="true"></i> <br><br>
+	<!-- <i class="fa fa-refresh fa-spin fa-3x fa-fw"></i> -->
+	
+	<div class="admin-page-data-container">
+		<div class="node-data-block expandable-header" ng-repeat='node in adminNodesCollection' ng-controller="serverNodesBlockController">
+			<button type="button" class="close expand-node-block-btn" aria-label="Expand/Collapse" ng-click="expandNodes()"> 
+				<i class="fa fa-lg fa-plus-circle" ng-hide="node.isExpanded" aria-hidden="true"></i>
+				<i class="fa fa-lg fa-minus-circle" ng-show="node.isExpanded" aria-hidden="true"></i>
+			</button> 
+			<i class="fa fa-lg fa-cogs" style="vertical-align: 0%;" aria-hidden="true"></i>&nbsp;
+			<span class="node-header">{{node.node}} </span><i class="fa fa-lg fa-info-circle" style="vertical-align: 0%; cursor: pointer;" aria-hidden="true" title="id : {{node._id.$oid}}"></i><br>
+			<div class="collapsable-node-data-container" ng-show="node.isExpanded">
+				<span class="node-sub-info-title">Host :</span><span class="node-sub-info">{{::node.host}}</span><br>
+				<span class="node-sub-info-title">Total Heap Size :</span><span class="node-sub-info">{{::node.totalHeapSize.$numberLong}}</span><br>
+				<span class="node-sub-info-title">Used Heap Size :</span><span class="node-sub-info">{{::node.usedHeapSize.$numberLong}}</span><br>
+				<span class="node-sub-info-title">LifeCycle :</span><span class="node-sub-info">{{::node.lifeCycle}}</span><br>
+				<span class="node-sub-info-title">Concurrency Level :</span><span class="node-sub-info">{{::node.concurrencyLevel}}</span><br>
+				<span class="node-sub-info-title expandable-node-sub-title">Status :</span>
+				<span class="node-sub-expandable-info">{{node.state}}</span>
+				<br><br>
+				<span class="node-sub-info-title expandable-node-sub-title">Events :</span>
+				
+				<span class="node-sub-expandable-info clickable-el" ng-click="expandEvents()" ng-show="node.events.length" title="Expand Events">{{node.events.length}}  
+					<span ng-show="node.events.length">
+						<i class="fa fa-plus-circle" ng-hide="isEventsExpanded" aria-hidden="true"></i>
+						<i class="fa fa-minus-circle" ng-show="isEventsExpanded" aria-hidden="true"></i>
+					</span>
+				</span>
+				<span class="node-sub-expandable-info" ng-hide="node.events.length">None</span>
+				<br>
+				
+				<table st-table="eventRowCollection" st-safe-src="safeEventRowCollection" ng-show="isEventsExpanded && node.events.length" class="table table-striped node-report-table">
+					<thead>
+					<tr>
+						<th st-sort="eventName">Event Name</th>
+						<th st-sort="eventType">Event Type</th>
+						<th st-sort="createdOn">Created On</th>
+						<th st-sort="mapName">Mapping</th>
+						<th st-sort="collectionName">Collection</th>
+						<th st-sort="createdBy">Created by</th>
+						<th st-sort="batchSize">Batch size</th>
+						<!-- <th> Actions </th> -->
+					</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="row in eventRowCollection">
+							<td>{{row.eventName }}</td>
+							<td>{{row.eventType}}</td>
+							<td>{{row.createdOn.$date | date}}</td>
+							<td>{{row.mapName}}</td>
+							<td>{{row.collectionName}}</td>
+							<td>{{row.createdBy}}</td>
+							<td>{{row.batchSize}}</td>
+							<!-- <td> 
+								<div class="nodes-grid-buttons-container">
+									<button type="submit" ng-click="stopNode(row)" class="btn btn-default node-grid-icon-button" title="Stop Node"><i class="fa fa-times"></i></button>
+								</div>
+							 </td> -->
+						</tr>
+					</tbody>
+					<tfoot>
+					<tr>
+						<td colspan="7" class="text-center">
+							<div st-pagination="" st-items-by-page="10" st-displayed-pages="7"></div>
+						</td>
+					</tr>
+				</tfoot>
+				</table>
+				
+			</div>
+			
+			
+		</div>
+	</div>
+	
+	<!-- <table st-table="eventRowCollection" st-safe-src="safeEventRowCollection" class="table table-striped node-report-table">
+		<thead>
+		<tr>
+			<th st-sort="eventName">Node Name</th>
+			<th st-sort="status">Host</th>
+			<th st-sort="createdOn">Conc Level</th>
+			<th st-sort="createdBy">Heap Size</th>
+			<th st-sort="collectionName">Used Heap size</th>
+			<th st-sort="collectionName">Active Events</th>
+			<th> Actions </th>
+		</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="row in adminNodesCollection">
+				<td>{{row.nodeName }}</td>
+				<td>{{row.host}}</td>
+				<td>{{row.concurrencyLevel}}</td>
+				<td>{{row.totalHeapSize}}</td>
+				<td>{{row.usedHeapSize}}</td>
+				<td>{{row.activeEvents}}</td>
+				<td> 
+					<div class="nodes-grid-buttons-container">
+						<button type="submit" ng-click="stopNode(row)" class="btn btn-default node-grid-icon-button" title="Stop Node"><i class="fa fa-times"></i></button>
+					</div>
+				 </td>
+			</tr>
+		</tbody>
+		<tfoot>
+		<tr>
+			<td colspan="7" class="text-center">
+				<div st-pagination="" st-items-by-page="10" st-displayed-pages="7"></div>
+			</td>
+		</tr>
+	</tfoot>
+	</table> -->
+	
+	<!-- Active events : <br>
+	
+	<ul>
+	<li> MaxxTest</li>
+	<li>FD</li>
+	<li>FGG33</li>
+	<li>CHECKCfDD225</li>
+	<li>DDAAAAA22</li>
+	<li>EYTREW</li>
+	</ul> -->
+	
+	</div>
+</div>
+

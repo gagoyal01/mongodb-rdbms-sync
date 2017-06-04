@@ -1,0 +1,137 @@
+<div class="modal fade" id="DBMigratorPopup" tabindex="-1" role="dialog"
+	aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="myModalLabel">Conncting to Database</h4>
+			</div>
+			<div class="modal-body">
+				<div class="input-error-label" style="display: none"></div>
+				<div class="message-section"></div>
+				<div class="progress">
+					<div
+						class="progress-bar progress-bar-success progress-bar-striped active"
+						role="progressbar" aria-valuenow="100" aria-valuemin="0"
+						aria-valuemax="100" style="width: 100%"></div>
+				</div>
+				<br> <input type="text" class="form-control" value="" id="popupInputField" autofocus>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" id="inputPopupSubmitBtn">OK</button>
+					<button type="button" class="btn btn-primary" id="infoPopupOkBtn" data-dismiss="modal">OK</button>
+					<button type="button" class="btn btn-primary" id="infoPopupCancelBtn" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="DBMigratorNameDescriptionPopup" tabindex="-1" role="dialog"
+	aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="myModalLabel">Please enter name and description.</h4>
+			</div>
+			<div class="modal-body">
+				<div class="input-error-label" style="display: none"></div>
+				<div class="title-message-section">Name</div>
+				<br> <input type="text" class="form-control" value="" id="nameDescPopupNameField" autofocus>
+				<div class="description-message-section">Description</div>
+				<br> <textarea class="form-control" value="" id="nameDescPopupDescField" rows="5"></textarea>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary"
+						id="nameDescPopupSubmitBtn">OK</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade bs-example-modal-sm" id="DBMigratorSelectorPopup" data-backdrop="static" role="dialog" aria-labelledby="progresssDialogTitle">
+	<!--  data-backdrop="static"  -->
+	<div class="modal-dialog modal-lg" ng-controller="selectOptionPopup">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" ng-hide="migratTypeSelectMode" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="selectDialogTitle">{{title}}</h4>
+			</div>
+			<div class="modal-body">
+				<div ng-hide="migratTypeSelectMode" class="select-popup-select-area" ng-repeat="option in options" ng-click="selectOption(option)">{{option.label1}}&nbsp;&nbsp;<i class="fa fa-lg fa-exchange"></i>&nbsp;&nbsp;{{option.label2}}</div>
+				<div class="migrate-type-selector" ng-show="migratTypeSelectMode">
+					<div style="background-color: #079dc0" class="select-popup-select-area migrate-selection" ng-click="selectOption({'value': 'Mongo'})"><i class="fa fa-database"></i>&nbsp;RDBMS&nbsp;&nbsp;&nbsp;<i class="fa fa-lg fa-arrow-circle-right"></i>&nbsp;&nbsp;&nbsp;<i class="fa fa-leaf"></i>&nbsp;Mongo</div>
+					<div style="background-color: #079dc0" class="select-popup-select-area migrate-selection" ng-click="selectOption({'value': 'Oracle'})"><i class="fa fa-leaf"></i>&nbsp;Mongo&nbsp;&nbsp;&nbsp;<i class="fa fa-lg fa-arrow-circle-right"></i>&nbsp;&nbsp;&nbsp;<i class="fa fa-database"></i>&nbsp;RDBMS</div>
+				</div>
+				
+			</div>
+			<div class="modal-footer" ng-show="migratTypeSelectMode">
+			  <button type="button" ng-click="backToHome()" class="btn btn-primary" data-dismiss="modal"><i title="Go to Home Page" class="fa fa-lg fa-home">&nbsp;&nbsp;Back</i></button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- <div class="modal fade bs-example-modal-sm" id="DBMigratorIdentifierSelectorPopup" tabindex="-1" role="dialog" aria-labelledby="progresssDialogTitle">
+	 data-backdrop="static" 
+	<div class="modal-dialog modal-lg" ng-controller="identifiersSelectPopup">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="selectDialogTitle">{{title}}</h4>
+			</div>
+			<div class="modal-body">
+				<ul class="identifier-select-ul">
+				<li ng-repeat="attr in element.attrs" ng-if="attr.columnData">
+				<input ng-model="attr.isIdentifier" type="checkbox"><span ng-click="attr.isIdentifier = !attr.isIdentifier" class="identifier-check-label">{{attr.attributeName}}</span></li>
+				</ul>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div> -->
+
+<div class="modal fade bs-example-modal-sm" id="DBMigratorSmallPopup" tabindex="-1" role="dialog" aria-labelledby="progresssDialogTitle">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="progresssDialogTitle">Small modal</h4>
+			</div>
+			<div class="modal-body">
+				<div class="progress">
+					<div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="DBMigratorBigInfoPopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog modal-lg" role="document" ng-controller="bigInfoPopup">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button> <!--  Close x button on top right -->
+				<h4 class="modal-title" id="myModalLabel">{{title}}</h4>
+			</div>
+			<div class="modal-body">
+				<div class="message-section" ng-bind-html="htmlMessage"></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" id="infoPopupOkBtn" data-dismiss="modal">OK</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- <div ng-controller="popupInitializer"></div> -->

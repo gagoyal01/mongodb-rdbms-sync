@@ -1,0 +1,238 @@
+<script type="text/ng-template" id="left-expression-editor">
+	<label>{{expressionTitle}} <span class="expression-sub-info" ng-show="sameParentTableRelationMode && !filter.logicalOperator">&nbsp;[Parent]</span></label><br>
+	<div class="error-label" ng-show="filter.leftErrors" >
+		<ul>
+			<li ng-repeat="error in filter.leftErrors">{{error}}</li>
+		</ul>
+	</div>
+	<div class="filter-expression-editor" ng-show="doesExpressionExist()">
+		<button aria-label="Close" class="close" type="button" ng-click="resetExpression()" ng-hide="isFirstTableRelationFilter()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+		<form class="form-inline form-with-margin">
+			<div class="form-group" ng-hide="isExpressionColumnValue()">
+				<label>Type:</label>
+				<div class="dropdown inline-div-container">
+				  <button class="btn btn-default dropdown-toggle dropdown-label"  id="expressionType" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				    {{ filter.leftHandExpression.literalType || "Select"}}
+				    <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu" aria-labelledby="expressionType">
+				    <li><a ng-click="filter.leftHandExpression.literalType = 'NUMBER'">NUMBER</a></li>
+				    <li><a ng-click="filter.leftHandExpression.literalType = 'DATE'">DATE</a></li>
+				    <li><a ng-click="filter.leftHandExpression.literalType = 'VARCHAR'">VARCHAR</a></li>
+				  </ul>
+				</div><br>
+			</div>
+			<div class="form-group" ng-hide="isExpressionColumnValue()">
+				<label>Value:</label>
+				<input type="text" class="form-control tbl-rel-value-input" ng-show="filter.leftHandExpression.literalType != 'DATE'" ng-model="filter.leftHandExpression.literalValue" placeholder="Enter value">
+				<div ng-controller="DatepickerCtrl" class="tbl-rel-datepicker" ng-hide="filter.leftHandExpression.literalType != 'DATE'">
+					<p class="input-group">
+          				<input type="text" class="form-control relation-expression-datepicker-label" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+          				<span class="input-group-btn">
+            				<button type="button" class="btn btn-default tbl-rel-calendar-btn" ng-click="open1()"><i class="fa fa-lg fa-calendar"></i></i></button>
+          				</span>
+        			</p>
+				</div>
+			</div>
+			<div ng-show="isExpressionColumnValue()" >
+				<div class="form-group">
+					<label>table:</label>
+					<div class="dropdown inline-div-container">
+				  		<button class="btn btn-default dropdown-toggle dropdown-label table-name-dropdown" ng-disabled="isTableSelectDisabled()" title="{{filter.leftHandExpression.columnData.table || 'Not Selected'}}"  type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				    		{{ filter.leftHandExpression.columnData.table || "Select"}}
+				    		<span class="caret"></span>
+				  		</button>
+				  		<ul class="dropdown-menu" aria-labelledby="expressionType">
+				  		   <li ng-repeat="tableName in getTableList()"><a ng-click="filter.leftHandExpression.columnData.table = tableName" title="{{tableName}}" >{{tableName}}</a></li>
+						</ul>
+					</div>
+				</div><br>
+				<div class="form-group">
+					<div class="autocomplete-label"><label>column:</label></div>
+					<div ng-controller="autoCompleteColumnCtrl as ctrl" layout="column" ng-cloak class="inline-div-container" ng-include="'tpl-autocomplete-dropdown'"></div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="select-expression-box" ng-show="!doesExpressionExist()">
+		Select > <button type="button" class="btn btn-warning" id="setTableColumnBtn" ng-click="setExpressionColumnValue()">Table Column</button>
+		<!-- <button type="button" class="btn btn-warning" id="setLiteralValueBtn" ng-click="setExpressionLiteralValue()">Value</button> -->
+	</div>
+</script>
+
+<script type="text/ng-template" id="right-expression-editor">
+	<label>{{expressionTitle}} <span class="expression-sub-info" ng-show="sameParentTableRelationMode && !filter.logicalOperator">&nbsp;[Child]</span></label><br>
+	<div class="error-label" ng-show="filter.rightErrors" >
+		<ul>
+			<li ng-repeat="error in filter.rightErrors">{{error}}</li>
+		</ul>
+	</div>
+	<div class="filter-expression-editor" ng-show="doesExpressionExist()">
+		<button aria-label="Close" class="close" type="button" ng-click="resetExpression()" ng-hide="isFirstTableRelationFilter()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+		<form class="form-inline form-with-margin">
+			<div class="form-group" ng-hide="isExpressionColumnValue()">
+				<label>Type:</label>
+				<div class="dropdown inline-div-container">
+				  <button class="btn btn-default dropdown-toggle dropdown-label" id="expressionType" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				    {{ filter.rightHandExpression.literalType || "Select"}}
+				    <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu" aria-labelledby="expressionType">
+				    <li ng-class="{disabled:isMultipleInputRequired()}"><a ng-click="filter.rightHandExpression.literalType = 'NUMBER'">NUMBER</a></li>
+				    <li ng-class="{disabled:isMultipleInputRequired()}"><a ng-click="filter.rightHandExpression.literalType = 'DATE'">DATE</a></li>
+				    <li ng-class="{disabled:isMultipleInputRequired()}"><a ng-click="filter.rightHandExpression.literalType = 'VARCHAR'">VARCHAR</a></li>
+				  </ul>
+				</div>
+			</div>
+			<div class="form-group" ng-hide="isExpressionColumnValue()">
+				<label>Value :</label>
+				<input type="text" class="form-control tbl-rel-value-input" ng-show="!isMultipleInputRequired() && filter.rightHandExpression.literalType != 'DATE'" ng-model="filter.rightHandExpression.literalValue" placeholder="Enter value">
+				<input type="text" class="form-control tbl-rel-value-input" ng-show="isMultipleInputRequired()" ng-model="filter.rightHandExpression.literalValues" placeholder="Enter values" ng-list required>
+				<div ng-controller="DatepickerCtrl" class="tbl-rel-datepicker" ng-show="!isMultipleInputRequired() && filter.rightHandExpression.literalType == 'DATE'">
+					<p class="input-group">
+          				<input type="text" class="form-control relation-expression-datepicker-label" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+          				<span class="input-group-btn">
+            				<button type="button" class="btn btn-default tbl-rel-calendar-btn" ng-click="open1()"><i class="fa fa-lg fa-calendar"></i></i></button>
+          				</span>
+        			</p>
+				</div>
+			</div>
+			<div ng-show="isExpressionColumnValue()" >
+				<div class="form-group">
+					<label>table:</label>
+					<div class="dropdown inline-div-container">
+				  		<button class="btn btn-default dropdown-toggle dropdown-label table-name-dropdown" ng-disabled="!filter.logicalOperator && !selfFilterMode" title="{{filter.rightHandExpression.columnData.table || 'Not Selected'}}"  type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				    		{{ filter.rightHandExpression.columnData.table || "Select"}}
+				    		<span class="caret"></span>
+				  		</button>
+				  		<ul class="dropdown-menu" style="left: auto; right: 0;" aria-labelledby="expressionType">
+				  		   <li ng-repeat="tableName in tablesRelationDataScope.availableTables"><a ng-click="filter.rightHandExpression.columnData.table = tableName" title="{{tableName}}">{{tableName}}</a></li>
+						</ul>
+					</div>
+				</div><br>
+				<div class="form-group">
+					<div class="autocomplete-label"><label>column:</label></div>
+                     <div ng-controller="autoCompleteColumnCtrl as ctrl" layout="column" class="inline-div-container" ng-include="'tpl-autocomplete-dropdown'" ng-cloak> </div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="select-expression-box" ng-show="!doesExpressionExist()">
+		<div ng-hide="filter.rightHandExpression.isNA">
+			Select > 
+			<button type="button" class="btn btn-warning" id="setTableColumnBtn" ng-click="setExpressionColumnValue()" ng-disabled="filter.rightHandExpression.isNA">Table Column</button>
+			<button type="button" class="btn btn-warning" id="setLiteralValueBtn" ng-click="setExpressionLiteralValue()" ng-disabled="filter.rightHandExpression.isNA">Value</button>
+		</div>
+		<span ng-show="filter.rightHandExpression.isNA"> -- NA --</span>
+	</div>
+</script>
+
+<div class="modal fade" id="DBMigratorTableRelationPopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content" ng-controller="tableRelationsEditorController">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" ng-hide="parentMode || selfFilterMode" id="myModalLabel">Choose a table relation with {{tableName}}</h4>
+				<h4 class="modal-title" ng-show="parentMode && !selfFilterMode" id="myModalLabel">Choose a Parent table relation with {{tableName}}</h4>
+				<h4 class="modal-title" ng-show="selfFilterMode" id="myModalLabel">Choose custom filters for {{collectionName}}.</h4>
+			</div>
+			<div class="modal-body">
+				<div class="disable-editor-div" ng-show="fetchingData"></div>
+				<div ng-hide="selfFilterMode">
+				<label ng-hide="parentMode" class="dropdown-label">Join to Table : </label>
+				<label ng-show="parentMode && !sameParentTableRelationMode" class="dropdown-label">Join to Parent Table : </label>
+				<label ng-show="parentMode && sameParentTableRelationMode" class="dropdown-label">Define Self filter with : </label>
+				<div class="dropdown inline-div-container">
+				  <button class="btn btn-default dropdown-toggle" ng-disabled="isEditorMode"  id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				    {{ joinTableName || "Select"}}
+				    <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu" aria-labelledby="dLabel">
+				  	<li ng-repeat="tableEntry in availableOtherTables"><a ng-click="setTable(tableEntry)">{{tableEntry}}</a></li>
+				  </ul>
+				</div>
+				&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+				<label>Join Type : </label>
+				<div class="dropdown inline-div-container">
+				  <button class="btn btn-default dropdown-toggle dropdown-label"  id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				    {{ joinType || "Select Joint Type"}}
+				    <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu" aria-labelledby="dLabel">
+				    <li><a ng-click="joinType = 'INNER'">INNER</a></li>
+				    <li><a ng-click="joinType = 'LEFT_OUTER'">LEFT_OUTER</a></li>
+				    <li><a ng-click="joinType = 'RIGHT_OUTER'">RIGHT_OUTER</a></li>
+				    <li><a ng-click="joinType = 'FULL_OUTER'">FULL_OUTER</a></li>
+				  </ul>
+				</div>
+				</div>
+				<br>
+				<div class="tbl-rel-waiting-progress">
+					<div class="progress" ng-show="fetchingData"><div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">Loading.... Please Wait !!</div></div>
+				</div>
+				<br>
+				<div class="message-section relations-editor-outline" ng-show="filters.length">
+					<div class="table-relations-filters-section db-section-group-outline" ng-repeat="filter in filters" ng-controller="filterBlockController">
+					
+						<div class="dropdown" ng-show="filter.logicalOperator">
+							<button class="btn btn-info dropdown-toggle"  id="dSqlOperationOpratorLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							    {{filter.logicalOperator || "Select"}}
+							    <span class="caret"></span>
+						  </button>
+						  <ul class="dropdown-menu" aria-labelledby="dSqlOperationOpratorLabel">
+						    <li><a ng-click="filter.logicalOperator = 'AND'">AND</a></li>
+						    <li><a ng-click="filter.logicalOperator = 'OR'">OR</a></li>
+						  </ul>
+						  
+					  </div>
+					  
+					  <button aria-label="Close" class="close" ng-click="removeFilter(filter)" ng-hide="isFirstTableRelationFilter()" type="button">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<div class="error-label" ng-show="filter.isLHSInvalidColumn()" >
+							 Column type {{getLHSColumnType()}} is not allowed in comparison !! 						
+						</div>
+						<div class="filter-left-section" ng-controller="leftExpressionController" ng-include="'left-expression-editor'"> <!-- !!TODO  YOU CAN CREATE A TEMPLATE AND ADD IT HERE USING ng-include so that both right and lft expression will use it -->
+							
+						</div>
+						<div class="filter-center-section">
+							<label>Operator</label><br>
+							<div class="dropdown inline-div-container">
+								<button class="btn btn-default dropdown-toggle"  id="dSqlOperationLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								    {{filter.sqlOperation || "Select"}}
+								    <span class="caret"></span>
+								  </button>
+								  <ul class="dropdown-menu" aria-labelledby="dSqlOperationLabel">
+								    <li><a ng-click="filter.sqlOperation = 'EQ'">EQ</a></li>
+								    <li><a ng-click="filter.sqlOperation = 'NE'">NE</a></li>
+								    <li><a ng-click="filter.sqlOperation = 'GT'">GT</a></li>
+								    <li><a ng-click="filter.sqlOperation = 'GTE'">GTE</a></li>
+								    <li><a ng-click="filter.sqlOperation = 'LT'">LT</a></li>
+								    <li><a ng-click="filter.sqlOperation = 'LTE'">LTE</a></li>
+								    <li ng-hide="isFirstTableRelationFilter() || isParentTableOnLeftOrRight()"><a ng-click="filter.sqlOperation = 'IN'">IN</a></li>
+								    <li ng-hide="isFirstTableRelationFilter() || isParentTableOnLeftOrRight()"><a ng-click="filter.sqlOperation = 'NIN'">NIN</a></li>
+								    <li ng-hide="isFirstTableRelationFilter() || isParentTableOnLeftOrRight()"><a ng-click="filter.sqlOperation = 'IS_NULL'">ISNULL</a></li>
+								    <li ng-hide="isFirstTableRelationFilter() || isParentTableOnLeftOrRight()"><a ng-click="filter.sqlOperation = 'IS_NOT_NULL'">ISNOTNULL</a></li>
+								  </ul>
+							  </div>
+						</div>
+						<div class="filter-right-section" ng-controller="rightExpressionController" ng-include="'right-expression-editor'">
+						</div>
+					</div>
+				</div><br>
+				<div class="centre-btn-div"><button type="button" class="btn btn-primary" id="AddFilterToRelationBtn" ng-click="addNewFilter()">ADD Filter</button></div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" id="DBMigratorTableRelationPopupCancelButton" data-dismiss="modal" ng-click="DiscardRelation()">Cancel</button>
+					<button type="button" class="btn btn-primary" id="DBMigratorTableRelationPopupOkButton" ng-click="ValidateAndAddRelation()">OK</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

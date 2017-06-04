@@ -1,0 +1,425 @@
+<div ng-controller="homeViewController">
+	<!-- <div ng-include src="plugInTemplatesURL"></div> -->
+	<div class="home-left-section">
+		<div class="user-info-section">
+			<i class="fa fa-5x fa-user user-icon"></i>
+			<div class="user-info-box">
+				<span class="home-user-name">{{UserData.userid}}</span><br>
+				<span class="home-user-role">{{UserData.userRole}}</span><br>
+			</div>
+			
+		</div>
+		<hr>
+		<div class="user-actions-section">
+			<!-- <button type="submit" ng-click="" class="btn btn-primary btn-create-migrate-job">Create Migrate Job</button> -->
+			<a class="btn btn-primary btn-create-migrate-job" ng-click="createMigrateJob()"  role="button"><i class="fa fa-lg fa-sitemap" aria-hidden="true"></i>&nbsp;&nbsp;Create Mapping</a>
+			<a class="btn btn-primary btn-create-migrate-job" ng-click="createEvent()"  role="button"><i class="fa fa-lg fa-play-circle-o" aria-hidden="true"></i>&nbsp;&nbsp;Create Event</a>
+			<a class="btn btn-primary btn-create-migrate-job" ng-click="AssignDBPage()"  role="button"><i class="fa fa-lg fa-users" aria-hidden="true"></i>&nbsp;&nbsp;Assign DB's</a>
+		</div>
+	</div>
+	<div class="home-right-section">
+	
+	<uib-tabset type="pills" active="activeJustified" justified="true">
+	    <uib-tab index="0" heading="Events">
+			<table st-table="eventRowCollection" st-safe-src="safeEventRowCollection" class="table table-striped mig-report-table">
+				<thead>
+				<tr>
+					<th st-sort="eventName">Event Name</th>
+					<th st-sort="status">Status</th>
+					<th st-sort="createdOn">Date Created</th>
+					<th st-sort="createdBy">Created by:</th>
+					<th st-sort="collectionName">Collection Name</th>
+					<th> Actions </th>
+				</tr>
+				<tr>
+					<th colspan="3"><input st-search="" class="form-control" placeholder="Search events..." type="text"/></th>
+					<th class="search-icon-th">
+						<i class="fa fa-2x fa-search" aria-hidden="true"></i>
+					</th>
+					<th></th>
+					<th>
+						<i class="fa fa-2x fa-refresh home-page-refresh-grid-btn static-reload-btn clickable-el" title="Refresh Events Data" ng-click="loadAllEvents()" ng-hide="isEventsLoading" aria-hidden="true"></i>
+						<i class="fa fa-2x fa-refresh home-page-refresh-grid-btn fa-spin fa-fw" title="Refreshing Events" ng-show="isEventsLoading" aria-hidden="true"></i>
+					</th>
+				</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="row in eventRowCollection">
+						<td>{{row.eventName }}</td>
+						<td>{{row.status}}</td>
+						<td>{{row.createdOn.$date | date}}</td>
+						<td>{{row.createdBy}}</td>
+						<td>{{row.collectionName}}</td>
+						<td> 
+							<div class="mapping-grid-buttons-container">
+								<button type="submit" ng-disabled="row.status == 'PENDING'" ng-click="viewMigrationStatus(row)" class="btn btn-default status-grid-icon-button" title="View Status"><i class="fa fa-hourglass-half"></i></button>
+								<button type="submit" ng-disabled="row.status != 'PENDING'" ng-click="editEvent(row)" class="btn btn-default status-grid-icon-button" title="Edit Event"><i class="fa fa-pencil"></i></button>
+								<button type="submit" ng-click="deleteEvent(row)" class="btn btn-default status-grid-icon-button" title="Delete event"><i class="fa fa-lg fa-trash-o"></i></button>
+								<button type="submit" ng-click="cancelEvent(row)" class="btn btn-default status-grid-icon-button" title="Cancel Event"><i class="fa fa-times"></i></button>
+								<button type="submit" ng-disabled="!(row.status == 'FAILED')" ng-click="showErrors(row)" class="btn btn-default status-grid-icon-button" title="Show Error Log"><i class="fa fa-exclamation-triangle"></i></button>
+								<button type="submit" ng-disabled="!(row.status == 'FAILED')" ng-click="retryEvent(row)" class="btn btn-default status-grid-icon-button" title="Retry Event"><i class="fa fa-refresh"></i></button>
+							</div>
+						 </td>
+					</tr>
+				</tbody>
+				<tfoot>
+				<tr>
+					<td colspan="7" class="text-center">
+						<div st-pagination="" st-items-by-page="10" st-displayed-pages="7"></div>
+					</td>
+				</tr>
+			</tfoot>
+			</table>
+	    </uib-tab>
+	    <uib-tab index="1" heading="Mappings">
+	    	<table st-table="mappingRowCollection" st-safe-src="safeMappingRowCollection" class="table table-striped mig-report-table">
+				<thead>
+				<tr>
+					<th st-sort="mapName">Mapping Name</th>
+					<th st-sort="createdBy">Created By</th>
+					<th st-sort="createdOn">Date Created</th>
+					<th st-sort="mapType">Mapping Type</th>
+					<th> Actions </th>
+				</tr>
+				<tr>
+					<th colspan="2"><input st-search="" class="form-control" placeholder="Search mappings..." type="text"/></th>
+					<th class="search-icon-th"><i class="fa fa-lg fa-search" aria-hidden="true"></i></th>
+					<th></th>
+					<th>
+						<i class="fa fa-2x fa-refresh home-page-refresh-grid-btn static-reload-btn clickable-el" title="Refresh Mappings Data" ng-click="loadMappings()" ng-hide="isMappingssLoading" aria-hidden="true"></i>
+						<i class="fa fa-2x fa-refresh home-page-refresh-grid-btn fa-spin fa-fw" title="Refreshing Mappings" ng-show="isMappingssLoading" aria-hidden="true"></i>
+					</th>
+				</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="row in mappingRowCollection">
+						<td>{{row.mapName}}</td>
+						<td>{{row.createdBy}}</td>
+						<td>{{row.createdOn.$date | date}}</td>
+						<td>{{row.mapType | uppercase}}</td>
+						<td> 
+							<button type="submit" ng-click="showMapping(row)" class="btn btn-default status-grid-icon-button" title="View Mapping"><i class="fa fa-binoculars"></i></button>
+							<button type="submit" ng-click="editMigrationJob(row)" class="btn btn-default status-grid-icon-button" title="Edit Mapping"><i class="fa fa-pencil"></i></button>
+							<button type="submit" ng-click="editMigrationJob(row, true)" class="btn btn-default status-grid-icon-button" title="Duplicate Mapping"><i class="fa fa-files-o"></i></button>
+							<button type="submit" ng-click="deleteMapping(row)" class="btn btn-default status-grid-icon-button" title="Delete Mapping"><i class="fa fa-lg fa-trash-o"></i></button>
+						 </td>
+					</tr>
+				</tbody>
+				<tfoot>
+				<tr>
+					<td colspan="7" class="text-center">
+						<div st-pagination="" st-items-by-page="10" st-displayed-pages="7"></div>
+					</td>
+				</tr>
+			</tfoot>
+			</table>
+    	</uib-tab>
+  	</uib-tabset>
+	
+	</div>
+	
+	
+	
+	
+	<!-- Modal popup that will show MApping !!! -->
+	<div class="modal fade" id="homePageMappingViewer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"> 
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button> <!--  Close x button on top right -->
+					<h4 class="modal-title">{{mappingTitle}}</h4>
+				</div>
+				<div class="modal-body">
+					<div class="message-section">
+						<div style="display: inline;" class="mappingTableDiv">
+							<table st-table="TCArray" st-safe-src="TCDuplicateArray" class="table table-bordered table-striped ">
+								<thead>
+									<tr>
+										<th st-sort="tableName">Table</th>
+										<th st-sort="column">Column</th>
+										<th st-sort="attributeName">Attribute</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="row in TCArray"> 
+										<td>{{row.tableName}}</td>
+										<td>{{row.column}}</td>
+										<td><b ng-if='row.attribPreFix'>{{row.attribPreFix}}.</b>{{row.attributeName}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	<!-- Modal Popup to Create an Event  -->
+	<div class="modal fade" id="createEventModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" ng-controller="ceateEventController"> 
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button> <!--  Close x button on top right -->
+					<h4 class="modal-title">Create Event</h4>
+				</div>
+				<div class="modal-body" >
+					<div class="message-section event-details-form">
+					<div class="error-label" ng-show="newEvent.errors.length" >
+						<ul>
+						 	<li ng-repeat="error in newEvent.errors">{{error}}</li>
+						</ul>
+					</div><br>
+					<form class="form-inline">
+						<div class="form-group">
+							<label>Event Name : </label> 
+							<input ng-model="newEvent.name" type="text" class="form-control"/>
+						</div><br>
+					<!-- </form>
+					<form class="form-inline"> -->
+						<div class="form-group">
+							<label>Event Description : </label> 
+							<textarea ng-model="newEvent.desc" class="form-control" value="" rows="3"></textarea>
+						</div><br>
+						<div class="form-group">
+							<label>Event Type : </label> 
+							<div class="dropdown inline-div-container">
+							  <button class="btn btn-default dropdown-toggle dropdown-label"  id="eventType" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							    {{ newEvent.eventType || "Select"}}
+							    <span class="caret"></span>
+							  </button>
+							  <ul class="dropdown-menu" aria-labelledby="eventType">
+							    <li><a ng-click="setEventType('OrclToMongo')">RDBMS to Mongo [One Time]</a></li>
+							    <li><a ng-click="setEventType('OrclToMongoSync')">RDBMS to mongo [Sync]</a></li>
+							    <li><a ng-click="setEventType('MongoToOrcl')">Mongo to RDBMS [One Time]</a></li>
+							    <li><a ng-click="setEventType('MongoToOrclSync')">Mongo to RDBMS [Sync]</a></li>
+							    <li><a ng-click="setEventType('OrclToMongoGridFs')">RDBMS to Mongo GridFs [One Time]</a></li>
+							  </ul>
+							</div>
+						</div><br>
+						<div class="form-group">
+							<label>Mapping : </label> 
+							<div class="dropdown inline-div-container">
+							  <button class="btn btn-default dropdown-toggle dropdown-label"  id="eventType" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							    {{ newEvent.selectedMapping.mapName || "Select"}}
+							    <span class="caret"></span>
+							  </button>
+							  <ul class="dropdown-menu" aria-labelledby="eventType">
+							    <li><a ng-repeat="mapping in newEvent.loadedMappings" ng-click="setCurrentMapping(mapping)">{{mapping.mapName}}</a></li>
+							  </ul>
+							</div>
+							
+						</div><br>
+						<div class="form-group">
+							<label>Table/Collection Name : </label> 
+							<input type="text" ng-model="newEvent.attrName" class="form-control"/>
+						</div><br>
+						<div class="form-group" ng-show="newEvent.eventType == 'MongoToOrclSync'">
+							<label>
+								<input id="allowNullValueChk" ng-model="newEvent.allowRSE" type="checkbox"> 
+								Enable Restricted Sync
+							</label> <br><br>
+						</div>
+						<div class="form-group" ng-show="newEvent.eventType == 'OrclToMongo' || newEvent.eventType == 'OrclToMongoSync'">
+							<label>
+								<input id="allowNullValueChk" ng-model="newEvent.allowNull" type="checkbox"> 
+								Save nulls
+							</label>
+							<!-- <label ng-show="newEvent.eventType == 'OrclToMongo'">
+						      <input type="checkbox" ng-model="newEvent.parallelProcess"> Parallel Processing
+						    </label> -->
+						    <label ng-show="newEvent.eventType == 'OrclToMongoSync'">
+						      <input type="checkbox" ng-model="newEvent.pollBased"> Polling
+						    </label><br><br>
+							<div ng-show="newEvent.parallelProcess" class="parallel-process-block">
+								<div class="form-group">
+									<label>Degree of Parallelism : </label> 
+									<input type="number" name="quantity" ng-model="newEvent.parProDeg" min="1" max="50"><br>
+								</div><br>
+								<div class="form-group">
+									<label>Table:</label>
+									<div class="dropdown inline-div-container">
+								  		<button class="btn btn-default dropdown-toggle dropdown-label table-name-dropdown" ng-disabled="!newEvent.availableTables" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								    		{{ newEvent.columnData.tableName || "Select"}}
+								    		<span class="caret"></span>
+								  		</button>
+								  		<ul class="dropdown-menu" style="left: auto; right: 0;" aria-labelledby="expressionType">
+								  		   <li><a ng-click="newEvent.columnData.tableAlias = table.tableAlias; newEvent.columnData.tableName = table.tableName" ng-repeat="table in newEvent.availableTables">{{table.tableName}}</a></li>
+										</ul>
+									</div>
+								</div><br>
+								<div class="tbl-rel-waiting-progress" ng-show="fetchingData">
+									<div class="progress"><div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">Loading.... Please Wait !!</div></div>
+								</div>
+								<div class="form-group">
+									<div class="autocomplete-label"><label>Column:</label></div>
+				                     <div ng-controller="autoCompleteColumnCtrl as ctrl" layout="column" class="inline-div-container" ng-include="'tpl-autocomplete-dropdown'" ng-cloak> </div>
+								</div>
+							</div>
+							<div ng-show="newEvent.pollBased">
+								<div class="form-group">
+									<label>Polling Column : </label>
+									<div class="dropdown inline-div-container">
+								  		<button class="btn btn-default dropdown-toggle dropdown-label table-name-dropdown" type="button" data-toggle="dropdown" ng-disabled="!newEvent.pollingColumns" aria-haspopup="true" aria-expanded="false">
+								    		{{ newEvent.pollingColumn.columnName || "Select"}}
+								    		<span class="caret"></span>
+								  		</button>
+								  		<ul class="dropdown-menu" style="left: auto; right: 0;" aria-labelledby="expressionType">
+								  		   <li><a ng-click="processColumnForPolling(column)" ng-repeat="column in newEvent.pollingColumns">{{column.mappedOracleColumn.columnName}}</a></li>
+										</ul>
+									</div> 
+								</div><br>
+								<div class="form-group">
+									<label>Interval : </label> 
+									<input ng-model="newEvent.interval" type="number" class="form-control"/>
+									<div class="dropdown inline-div-container">
+								  		<button class="btn btn-default dropdown-toggle dropdown-label table-name-dropdown" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								    		{{ newEvent.timeUnit || "Select"}}
+								    		<span class="caret"></span>
+								  		</button>
+								  		<ul class="dropdown-menu" style="left: auto; right: 0;" aria-labelledby="expressionType">
+								  		   <li><a ng-click="newEvent.timeUnit = unit" ng-repeat="unit in newEvent.timeIntervalTypes">{{unit}}</a></li>
+										</ul>
+									</div>
+								</div><br>
+							</div>
+							<!-- <div ng-show="newEvent.triggerBased">
+								<div class="form-group">
+									<label>Trigger Column : </label>
+									<div class="dropdown inline-div-container">
+								  		<button class="btn btn-default dropdown-toggle dropdown-label table-name-dropdown" type="button" data-toggle="dropdown" ng-disabled="!newEvent.pollingColumns" aria-haspopup="true" aria-expanded="false">
+								    		{{ newEvent.triggerColumn.columnName || "Select"}}
+								    		<span class="caret"></span>
+								  		</button>
+								  		<ul class="dropdown-menu" style="left: auto; right: 0;" aria-labelledby="expressionType">
+								  		   <li><a ng-click="processColumnForTriggers(column)" ng-repeat="column in newEvent.pollingColumns">{{column.mappedOracleColumn.columnName}}</a></li>
+										</ul>
+									</div> 
+								</div><br>
+							</div> -->
+						</div><br>
+						<div ng-show="fetchingData">
+								<div class="progress"><div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">Loading.... Please Wait !!</div></div>
+						</div>
+						<div class="form-group" ng-show="newEvent.eventType == 'OrclToMongoSync'">
+							
+							<label class="autocomplete-label">Key Attributes : </label> 
+							<div ng-controller="autoCompleteColumnCtrlSimple as ctrl" layout="column" class="inline-div-container" ng-include="'tpl-autocomplete-dropdown-label'" ng-cloak> </div>
+							<br>
+							<div class="columns-floats-container">
+								<div ng-repeat="key in newEvent.keyAttrs" class="floating-column-names">
+								{{key.attributeName}}&nbsp;&nbsp;
+								<button type="button" class="close" ng-click="removeKeyAttr(key)" aria-label="Close"> <span aria-hidden="true">&times;</span></button></div>
+							</div>
+						</div><br>
+						<div class="form-group">							
+							<label class="autocomplete-label">Notification Alias : </label>
+							<input type="text" ng-model="newEvent.notificationAlias" class="form-control"/>
+						</div><br>
+					</form>
+					
+						
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" ng-click="submitEvent()">OK</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="eventStatusPoup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"> 
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" ng-click="closeStatusPopup()" aria-label="Close"> <span aria-hidden="true">&times;</span></button> <!--  Close x button on top right -->
+					<h4 class="modal-title">Status of Event : {{eventStatus.eventName}}</h4>
+				</div>
+				<div class="modal-body">
+					<div ng-show="eventStatus.fetching"><label>Loading.......</label></div>
+					<div ng-hide="eventStatus.fetching" class="message-section status-rows">
+						<label>Rows Read&nbsp;&nbsp;</label>:<label>&nbsp;&nbsp;{{eventStatus.rowsRead}}</label><br>
+						<label>Rows Dumped&nbsp;&nbsp;</label>:<label>&nbsp;&nbsp;{{eventStatus.rowsDumped}}</label><br>
+						<label>Total Rows&nbsp;&nbsp;</label>:<label>&nbsp;&nbsp;{{eventStatus.totalRows}}</label><br>
+						<label>Started On&nbsp;&nbsp;</label>:<label>&nbsp;&nbsp;{{eventStatus.startTime}}</label><br>
+						<div ng-show="eventStatus.showEndTime">
+							<label >Completed On&nbsp;&nbsp;</label>:<label>&nbsp;&nbsp;{{eventStatus.endTime}}</label><br>
+							<label >Duration &nbsp;&nbsp;</label>:<label>&nbsp;&nbsp;{{eventStatus.duration}}</label><br>
+						</div>
+					</div><br>
+					<div class="progress">
+					  <div class="progress-bar progress-bar-striped" ng-class="{active : eventStatus.isActive, 'progress-bar-success': eventStatus.isSuccess, 'progress-bar-danger': !eventStatus.isSuccess}" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{eventStatus.completionPerc}}%; min-width: 1em;">
+					    <span ng-show="eventStatus.isSuccess">{{eventStatus.completionPerc}}% Complete</span><span ng-hide="eventStatus.isSuccess">Failed !!</span>
+					  </div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" ng-click="closeStatusPopup()">OK</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="errorDetailsPopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"> 
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button> <!--  Close x button on top right -->
+					<h4 class="modal-title">Status of Event : {{errorData.eventName}}</h4>
+				</div>
+				<div class="modal-body">
+					<div class="error-container" >
+						<ul> 
+							<li ng-repeat="error in errorData">
+							<b>{{error.threadName}}</b><br>
+							Details : {{error.message}} <br>
+							<div ng-show="error.showDetails">{{error.fullStackTrace}}</div>
+							<label class="show-hide-error-detail" ng-show="error.fullStackTrace" ng-click="error.showDetails = !error.showDetails">[<span ng-hide="error.showDetails">Show</span><span ng-show="error.showDetails">Hide</span> error stack]</label>
+							<!-- <label ng-show="error.showDetails" ng-click="error.showDetails = !error.showDetails">Hide Full error stack</label> -->
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="restartDetailsPopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"> 
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button> <!--  Close x button on top right -->
+					<h4 class="modal-title">Rertart Event : {{restartEventData.eventName}}</h4>
+				</div>
+				<div class="modal-body">
+				<form class="form-inline">
+					<div class="form-group bordered-section restart-event-type-section">
+						<button type="button" class="btn btn-primary" ng-click="retryEventPartial()" data-dismiss="modal">Restart Failed Part</button><br>
+						<label class="info-text-label">Process only failed section</label>
+					</div>
+					<!-- <div class="form-group">&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;</div> -->
+					<div class="form-group bordered-section restart-event-type-section">
+						<button type="button" class="btn btn-primary" ng-click="retryEventFull()" data-dismiss="modal">Restart Entire Event</button>
+						<label>
+							<input id="allowNullValueChk" ng-model="restartEventData.dropCollection" type="checkbox"> 
+							Clear Collection
+						</label>
+					</div>
+				</form>
+				</div>
+				<!-- <div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+				</div> -->
+			</div>
+		</div>
+	</div>
+	
+</div>
+

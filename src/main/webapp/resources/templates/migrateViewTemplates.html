@@ -1,0 +1,267 @@
+
+<div ng-controller="dbMigratePageController">
+	<div class="db-migration-page">
+		<div class="db-migration-section">
+			<div ng-controller="dbSourceSection">
+				<h1>{{source.title}} :</h1>
+				<hr />
+				<h2>Database name : {{source.selectedDB}}
+					&nbsp;&nbsp;|&nbsp;&nbsp; Schema name : {{source.selectedSchema}}</h2>
+				<hr />
+				<form class="form-inline">
+					<div class="form-group">
+						<input class="form-control" ng-model="searchString" id="exampleInputEmail1" placeholder="Search for table name">
+						<button class="btn btn-primary" type="submit" ng-click="searchTable()">Find</button>
+						<!-- <input type="text" autocomplete="off" class="span3" style="margin: 0 auto;" data-provide="typeahead" data-items="4" data-source='["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Dakota","North Carolina","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]'> -->
+					</div>
+				</form>
+				<div class="database-tree-structure-main">
+					{{source.selectedSchema}} <span class="caret"></span>
+					<ul>
+						<li ng-repeat="data in tables" ng-controller="DBTableTreeController" ng-include="'table_column_tree_renderer.html'"></li>
+					</ul>
+				</div>
+			</div>
+			<br>
+		</div>
+
+		<div class="db-migration-section">
+			<div ng-controller="dbTargetSection">
+				<h1>{{target.title}} :</h1>
+				<hr />
+				<h2>Database name : {{target.selectedDB}}
+					&nbsp;&nbsp;|&nbsp;&nbsp; Schema name : {{target.selectedSchema}}</h2>
+				<hr />
+				<form class="form-inline">
+					<div class="form-group">
+						<button class="btn btn-primary" type="submit" ng-click="addNewCollection()" title="Add New Collection">+ Create New Collection </button>
+						<button class="btn btn-primary" type="submit" ng-click="addNewCollectionForGrid()" title="Add GridFs Collection">+ Create GridFs Collection </button>
+						<span class="btn btn-info btn-file" >
+						    <i class="fa fa-download"></i> Import JSON <input type="file" ng-model="migratePrefs.file" onChange="angular.element(this).scope().importJSON(this)">
+						</span>
+					    <a class="btn btn-info" id="exportTargetJSONBtn" ng-click="downloadJSON()" role="button"><i class="fa fa-upload"></i> Export JSON</a>
+					</div>
+				</form>
+				<div class="database-collection-list-main">
+					{{target.selectedSchema}} <span class="caret"></span> 
+					<div  class="checkbox null-value-checkbox">
+					    <label>
+					      <input id="allowNullValueChk" ng-model="migratePrefs.allowNull" type="checkbox"> Save nulls
+					    </label>
+					  </div>
+					<ul>
+						<li class="collection-name" ng-include="'collection_instance_renderer.html'" ng-repeat="element in collections">
+							
+						</li>
+					</ul>
+				</div>
+			</div>
+			<br>
+		</div>
+		
+		<div class="modal fade bs-example-modal-sm DBM-edit-attribute-popup" tabindex="-1" role="dialog" aria-labelledby="editAttributeDialogTitle">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="editAttributeDialogTitle">Specify Details for : {{attribEditData.currentAttribColName}}</h4>
+					</div>
+					<div class="modal-body">
+						<div droppable-area callbackfn="dropTableColumnName" class="column-create-data-area" acceptable="column">
+							<form class="form-inline">
+								<div class="error-label" ng-show="attribEditData.attribError" ><ul><li>{{attribEditData.attribError}}</li></ul></div>
+								<div class="form-group">
+									<label>Name:&nbsp;</label><input class="form-control" ng-disabled="(attribEditData.currentAttribName === 'FILE_NAME' || attribEditData.currentAttribName ==='INPUT_STREAM') ? true : false" ng-model="attribEditData.currentAttribName" id="attribNameRenameInput" placeholder="Edit Attribute Name"><br>
+								</div>
+								<br>
+								<div class="form-group">
+									<label>Type:&nbsp;</label>
+									<div class="dropdown db-mongo-attribute-type-dd">
+										<button class="btn btn-default dropdown-toggle form-control" type="button" id="loadSchema" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+											{{attribEditData.selectedAttribType}} <span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu" aria-labelledby="loadSchema">
+											<li ng-repeat="item in attribEditData.attribTypes">
+												<a ng-click="attribTypeSelected(item)">{{item}}</a>
+											</li>
+										</ul>
+									</div>
+								</div><br>
+								<div class="form-group">
+									<label>Ignore :&nbsp;</label><input class="form-control" ng-model="attribEditData.ignoreList" placeholder="Add ignore items" ng-list required><br>
+								</div><br>
+								<div class="form-group">
+									<label>Default Value :&nbsp;</label><input class="form-control" ng-model="attribEditData.defaultValue" placeholder="Set default value"><br>
+								</div>
+								<br>
+								<div ng-show="attribEditData.columnData.columnName && (attribEditData.currentAttribName == 'FILE_NAME' || attribEditData.currentAttribName =='INPUT_STREAM')">
+									<div class="form-group"><label>Linked Column : </label></div><br>
+									<div class="form-group column-attribute-data">
+										<button type="button" class="close remove-attribs-button" ng-click="removeGridAttribData()" aria-label="Close"> <span aria-hidden="true">&times;</span></button>
+										<label>Column : </label><label>{{attribEditData.columnData.columnName}}</label> <br>
+										<label>Table : </label><label>{{attribEditData.columnData.tableName}}</label> <br>
+									</div>
+								</div>
+								<!-- <div class="form-group full-width-section">
+								</div> -->
+							</form>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-primary" type="submit" ng-click="CancelAddAttribute()">Cancel</button>
+						<button class="btn btn-primary" type="submit" ng-click="addAttribute()">Done</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="final-submit-section">
+			<button class="btn btn-primary btn-final-submit" type="submit" ng-click="showMigrateJSON()" title="Show Migrate JSON"><i class="fa fa-lg fa-code"></i>&nbsp;Java JSON</button>
+			<button class="btn btn-primary btn-final-submit" type="submit" ng-click="showExportJSON()" title="Show Export JSON"><i class="fa fa-lg fa-code"></i>&nbsp;Export JSON</button>
+			<button class="btn btn-primary btn-final-submit" type="submit" ng-click="OnMigrate()">Save Mapping</button>
+		</div>
+	</div>
+</div>
+		
+<script type="text/ng-template" id="collection_instance_renderer.html" >	
+	<div ng-controller="dbCollectionInstanceController" class="mongo-collection-instance">	
+		<div>
+			<span class="subtree-node-path">¦--</span>
+			<span ng-hide="collectionRename"><span ng-click="toggleExpansion()">
+					<i class="fa fa-lg fa-folder-open-o" ng-show="isExpanded"></i>
+					<i class="fa fa-lg fa-folder" ng-hide="isExpanded"></i>
+				</span>&nbsp;
+				{{element.attributeName}}
+				<span ng-hide="element.isGridSpecific">
+					<i class=" clickable-el fa fa-lg fa-pencil" ng-click="renameCollection()" title="Rename Collection"></i>
+					<i ng-if="(element.collectionType != 'GridFs')" class="fa fa-lg fa-list clickable-el" ng-class="{filledicon : checkIdentifiers()}" title="Select identifiers" ng-show="isParentNode" ng-click="editIdentifiers()"></i>
+				</span>					
+				<i class="fa fa-lg fa-filter clickable-el" ng-class="{filledicon : element.filters.length}" title="Define self filters" ng-click="defineOwnFilter()"></i>
+				<i class="fa fa-lg fa-sitemap clickable-el" ng-class="{filledicon : element.sourceTables[0].joinedTables.length}" title="Edit table relations" ng-click="editTableRelations()"></i>
+				
+				<i class=" clickable-el fa fa-lg fa-times-circle remove-attrib" ng-click="clearAllAttribs(element)" title="Clear Collection"></i>
+			</span>
+			<div class="inline-div-container collection-rename-form" ng-show="collectionRename" ng-include="'collection_rename_form.html'"></div>
+		</div>
+		<div class="collection-elements-subdiv" ng-show="isExpanded">
+			<div ng-if="(element.collectionType != 'GridFs' && !element.isGridSpecific)">
+				<div droppable-area callbackfn="dropTableColumnName" class="column-drop-area collection-{{element.name}}" > Drag Column/Table here to Create Attribute/Collection
+					<i class="fa fa-plus-circle fa-lg clickable-el add-subcollection-btn" title="Add a sub collection" ng-click="AddSubCollection()"></i>
+					<i class="fa fa-arrow-circle-o-down fa-lg clickable-el add-subcollection-btn" title="Add a new attribute" ng-click="AddBlankAttribute()"></i>
+				</div>
+			</div>
+			<div ng-if="(element.collectionType != 'GridFs' && element.isGridSpecific)">
+				<div droppable-area callbackfn="dropGridFSAttrib" class="column-drop-area collection-{{element.name}}" > Drag Column/Table here to Create Attribute/Collection
+					<i class="fa fa-plus-circle fa-lg clickable-el add-subcollection-btn" title="Add a sub collection" ng-click="AddSubCollection()"></i>
+					<i class="fa fa-arrow-circle-o-down fa-lg clickable-el add-subcollection-btn" title="Add a new attribute" ng-click="AddBlankAttribute()"></i>
+				</div>
+			</div>
+			<div ng-if="(element.collectionType == 'GridFs')">
+				<div class="column-drop-area collection-{{element.name}}" > Add Meta Attributes
+					<i class="fa fa-plus-circle fa-lg clickable-el add-subcollection-btn" title="Add Meta Attributes" ng-disabled="isGridSubcollectionAdded" ng-click="addMetaAttributes()"></i>
+				</div>
+			</div>
+			<ul>
+				<li ng-repeat="element in element.attrs" ng-hide="isEditing" ng-include="getNodeTemplate(element)">
+				</li>
+			</ul>
+	 	</div> 
+		<div ng-if="isParentNode" ng-include="'select_identifier_popup.html'"></div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="table_column_tree_renderer.html">
+	<span class="file-tree-plus-btn" ng-click="getColumns(data, true)">
+		<span class="plus-sign" ng-hide="data.showtree">+</span>
+		<span class="minus-sign" ng-show="data.showtree">‒</span>
+	</span>
+	<i class="fa fa-table"></i><draggable-text xfer-data='{"type":"table", "dragType": "table", "tableName":"{{data.name}}"}' elem-label="{{data.name}}" title="Drag table to create sub-collection">{{data.name}}</draggable-text> 
+	<i class="fa fa-lg fa-indent draggable-text-element" draggable-element draggable="true" title="Drag this icon to copy columns only" xfer-data='{"type":"table", "tableName":"{{data.name}}", "onlyColumns": true}'></i>
+	<ul class="db-tree-ul" ng-show="data.showtree">
+		<li ng-show="!data.nodes.length">
+			<span class="subtree-node-path">¦-- No Columns
+		</li>
+      		<li class="db-tree-li" ng-repeat="node in data.nodes" ng-controller="dbColumnAttributeNode">
+			
+			<span class="subtree-node-path">¦--
+			<span class="file-tree-plus-btn" ng-click="toggleExpansion()">
+				<span class="plus-sign" ng-hide="isExpanded">+</span>
+				<span class="minus-sign" ng-show="isExpanded">‒</span>
+			</span>
+			</span><i class="fa fa-columns" ></i> 
+			<draggable-text xfer-data='{"tableName":"{{data.name}}", "dragType": "column", "type":"{{node.columnType}}", "label":"{{node.columnName}}"}' elem-label="{{node.columnName}}"></draggable-text>
+			<span ng-show="isExpanded" class="subnode-elem">¦---{{node.columnType}}</span>
+		</li>
+	</ul>
+</script>
+
+<script type="text/ng-template" id="collection_rename_form.html">
+	<form class="form-inline">
+		<div class="form-group">
+			<label>Name:&nbsp;</label><input class="form-control" ng-model="element.attributeName" id="attribNameRenameInput" placeholder="Edit Collection Name"><br>
+		</div><br>
+			<label>Type:&nbsp;</label>
+			<div class="dropdown db-mongo-attribute-type-dd">
+				<button class="btn btn-default dropdown-toggle form-control" type="button" id="loadSchema" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					{{element.attributeType || "Select"}} <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="loadSchema">
+					<li> <a ng-click="element.attributeType = 'AUTO'">AUTO</a></li>
+					<li><a ng-click="element.attributeType = 'ARRAY'">ARRAY</a></li>
+					<li><a ng-click="element.attributeType = 'COLLECTION'">COLLECTION</a></li>
+				</ul>
+			</div>
+		<div class="form-group full-width-section">
+			<button class="btn btn-primary" type="submit" ng-click="cancelRename()">Cancel</button>
+			<button class="btn btn-primary" type="submit" ng-click="renameDone()">Done</button>
+		</div>
+	</form>
+</script>
+
+<script type="text/ng-template" id="collection_end_node.html">	
+	<div ng-controller="dbMongoAttributeNode" class="end-node-block">
+		<span class="subtree-node-path">¦--
+			<span class="file-tree-plus-btn" ng-click="toggleExpansion()">
+				<span class="plus-sign" ng-hide="isExpanded">+</span>
+				<span class="minus-sign" ng-show="isExpanded">‒</span>
+			</span>
+		</span>
+		<i class="fa fa-file-o"></i>&nbsp;
+		<!--<span title="Type: {{element.type}}">{{element.attributeName}}</span>&nbsp;&nbsp;
+		<i class="fa fa-lg fa-pencil clickable-el" title="Edit" ng-click="editAttrib(element)"></i>
+		<i class="fa fa-lg fa-minus-circle clickable-el remove-attrib" title="Remove" ng-click="removeAttrib(element)"></i>
+		<i class="fa fa-lg fa-hashtag mark-identifier" ng-show="element.isIdentifier" title="Attribute is identifier""></i> -->
+		<i class="fa fa-columns" ng-hide="!isColumnMapped(element)"></i> 
+		<i class="fa fa-exclamation-circle link-incomplete" ng-show="!isColumnMapped(element)"></i> 
+		<span droppable-area callbackfn="dropGridFSAttrib" ng-class="{'link-incomplete': !isColumnMapped(element)}">{{element.attributeName }}</span>
+		<i class="fa fa-exclamation-triangle clickable-el error-icon" ng-show="!isColumnMapped(element)" title="null not allowed" ng-click="editAttrib(element)" aria-hidden="true"></i>
+		<i class="fa fa-lg fa-pencil clickable-el" title="Edit" ng-click="editAttrib(element)"></i>	
+		<i class="fa fa-lg fa-minus-circle clickable-el remove-attrib" ng-show="!isGridAttribute(element)" title="Remove" ng-click="removeAttrib(element)"></i>
+
+		<span ng-show="isExpanded" class="subnode-elem">¦---{{element.attributeType}}</span>
+	</div>
+</script>
+
+
+<script type="text/ng-template" id="select_identifier_popup.html">	
+	<div class="modal fade" id="selectIdentifierPopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-controller="selectIdentifierController"> 
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button> <!--  Close x button on top right -->
+					<h4 class="modal-title">Select the identifiers</h4>
+				</div>
+				<div class="modal-body">
+					<div class="message-section">
+						<div><label>Click on column name to set as identifier: </label><br></div> 
+						<div class="table-floats-container">
+							<div ng-repeat="attr in element.attrs" ng-click="selectIdentifier(attr)" class="floating-identifiers" ng-if="(attr.attributeType != 'AUTO' && attr.attributeType != 'COLLECTION')" ng-class="{selected: attr.isIdentifier}">{{attr.attributeName}}</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>

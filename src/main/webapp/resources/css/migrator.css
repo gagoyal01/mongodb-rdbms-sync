@@ -1,0 +1,1207 @@
+body {
+    font-family: Arial;
+    background-color: #ccc;
+    padding: 10px;
+    height: auto;
+    
+    -webkit-user-select: none;
+    -moz-user-select: -moz-none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.user-id-label{
+	padding: 10px;
+	border: 1px solid #206e9b;
+	border-radius: 3px;
+}
+
+.user-id-label a:visited{
+	color: #ffffff;
+}
+
+.clickable-el{
+	cursor: pointer;
+	color: #ffffff;
+	margin-left: 10px;
+}
+
+.clickable-icon{
+	cursor: pointer;
+	margin-left: 10px;
+}
+	
+/* .settings-icon:hover, */
+.clickable-el:hover,
+.clickable-icon:hover{
+	color: #bbbbbb;
+	text-shadow: 1px 3px #333333;
+}
+
+/* .settings-icon:active, */
+.clickable-el:active{
+	color: #000000;
+}
+
+.db-migrator-header{
+	background-color:#00abcc;
+	color:white; 
+	padding:15px;
+	border: 2px solid white;
+	border-radius: 5px;
+}
+
+.header-title{
+	font-size: 25px;
+	
+}
+
+.db-selection-page,
+.db-migration-page{
+	text-align: center;
+}
+
+.db-selection-section,
+.db-migration-section{
+	border: 2px solid white;
+    background-color: #00abcc;
+	padding: 5px 25px 25px;
+	border-radius: 5px;
+	display: inline-block;
+	text-align: left;
+	margin: 20px;
+	/* color: #ffffff; */
+}
+
+.db-migration-section{
+	min-width: 500px;
+	width: 45%;
+}
+
+.db-selection-section select{
+	width: 200px;
+}
+
+.db-selection-submit-section{
+	text-align: center;
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+.db-selection-section input{
+	width: 200px;
+	margin: 3px;
+	display: inline-block;
+}
+
+.db-select-orcl-block label,
+.db-select-mongo-block label,
+.db-selection-section label{
+	width: 150px;
+}
+
+.db-assign-page-tabset .final-submit-section,
+.db-selection-page .final-submit-section,
+.db-migration-page .final-submit-section{
+	padding: 10px;
+	padding-bottom: 25px;
+	text-align: center;
+	clear: both;
+}
+
+.db-assign-page-tabset .btn-final-submit,
+.db-selection-page .btn-final-submit,
+.db-migration-page .btn-final-submit{
+	width: 200px;
+	height: 50px;
+}
+
+.saved-db-config-dropdown,
+.db-type-selection-dropdown,
+.db-mongo-attribute-type-dd,
+.inline-div-container{
+	display: inline-block;
+	margin: 3px;
+	
+}
+
+.db-section-group-outline{
+	padding: 15px;
+	margin: 3px;
+	border: 1px solid #cccccc;
+	border-radius: 5px;
+	display: inline-block;
+}
+
+.db-type-selection-dropdown > button{
+	min-width: 125px;
+}
+.full-width-section{
+	width: 100%;
+	text-align: right;
+}
+
+.database-tree-structure-main,
+.database-collection-list-main{
+	margin-top: 20px;
+	border: 2px solid #cccccc;
+	border-radius: 5px;
+	padding: 20px;
+	color: #FFFFFF;
+	height: 400px;
+	min-width: 450px;
+	overflow: auto;
+}
+
+.database-tree-structure-main .modal,
+.database-collection-list-main .modal{
+	color: #333333;
+}
+
+.DBM-edit-attribute-popup{
+	color: auto;
+}
+
+.DBM-edit-attribute-popup .column-create-data-area{
+	text-align: left;
+}
+
+.DBM-edit-attribute-popup .column-create-data-area .form-group label{
+	width: 120px;
+	margin-bottom: 15px;
+}
+
+.DBM-edit-attribute-popup .column-attribute-data{
+	border: 1px solid #cccccc;
+    border-radius: 5px;
+    padding: 15px;
+    width: 100%;
+}
+
+.file-tree-plus-btn{
+	background-color: #aaaaaa;
+    border: 1px solid #ffffff;
+    display: inline-block;
+    line-height: 14px;
+    padding: 0 3px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #000;
+    margin-right: 3px;
+}
+
+.draggable-text-element{
+	cursor: pointer;
+	font-weight: normal;
+	margin-left: 5px;
+}
+
+.subnode-elem{
+	display: block;
+    font-size: 12px;
+    margin-left: 25px;
+    font-style: italic;
+}
+
+.draggable-text-element:hover {
+	color: #333333;
+}
+
+.file-tree-plus-btn:hover{
+	background-color: #777777;
+	border-color: #aaaaaa;
+	color: #000;
+}
+
+.database-tree-structure-main ul,
+.database-collection-list-main ul {
+    list-style: none;
+    padding-left: 10px;
+}
+.database-tree-structure-main li,
+.database-collection-list-main li {
+    margin-left: 0px;
+    margin-top: 5px;
+}
+
+.subtree-node-path{
+	color: #333333;
+}
+
+.column-drop-area{
+	background-color: #70b9e1;
+    border: 2px solid #206e9b;
+    border-radius: 3px;
+    color: #555555;
+    margin-top: 10px;
+    
+    /* After adding nested collection*/
+    padding: 10px; /*25px;*/
+    width: 300px;
+    margin-left: 10px;
+}
+
+.column-drop-area .add-subcollection-btn{
+	margin-top: -7px;
+	float: right;
+}
+
+.collection-rename-form{
+	background-color: #70b9e1;
+    border: 2px solid #206e9b;
+    border-radius: 3px;
+    color: #555555;
+    margin-top: 10px;
+    padding: 10px; 
+    width: 400px;
+    margin-left: 10px;
+}
+
+.column-create-data-area,
+.generic-outlined-form{
+	padding: 10px;
+	margin: 5px;
+	border: 1px solid #cccccc;
+	box-shadow: 2px 2px 3px #333333;
+	border-radius: 5px;
+}
+
+.remove-attrib{
+	color: #cccccc;
+}
+
+.remove-attrib:hover{
+	color: #FF3333;
+}
+
+.mark-identifier{
+	margin-left: 10px;
+}
+
+/*
+.end-node-block:hover .mark-identifier{
+	display: inline;
+} */
+
+.null-value-checkbox{
+	display: inline-block;
+	/* border: 2px solid #FFFFFF; */
+	padding-left : 10px;
+}
+
+.collection-elements-subdiv{
+	margin-left: 10px;
+}
+
+#DBMigratorTableRelationPopup .dropdown-label label{
+	min-width: 110px;
+}
+
+#DBMigratorTableRelationPopup ul.dropdown-menu{
+	max-height: 200px;
+	overflow: auto;
+}
+
+#DBMigratorTableRelationPopup label{
+	min-width: 90px;
+	margin-left: 20px;
+}
+
+#DBMigratorTableRelationPopup .table-relations-filters-section label{
+	margin: auto;
+}
+
+/* #DBMigratorTableRelationPopup .dropdown button{
+	min-width: 150px;
+} */
+
+
+
+.centre-btn-div{
+	padding: 5px;
+	text-align: center;
+}
+
+.filter-expression-editor,
+.select-expression-box{
+	width: 310px;
+	padding: 10px 15px;
+	border: 1px solid #cccccc;
+	box-shadow: 2px 2px 3px #333333;
+}
+
+#DBMigratorTableRelationPopup .filter-expression-editor label{
+	min-width: 75px;
+}
+
+.select-popup-select-area{
+	margin: 5px;
+	padding: 5px;
+	background: #349bd5;
+	border: 2px solid #206e9b;
+	border-radius: 3px;
+	cursor: pointer;
+	text-align: center;
+	color: #ffffff;
+}
+
+.select-popup-select-area.migrate-selection{
+	font-size: 40px;
+}
+
+.migrate-type-selector{
+	text-align: center;
+}
+
+
+.select-popup-select-area:hover{
+	box-shadow: 2px 2px 3px #333333;
+	margin: 3px 5px 7px 3px;
+}
+
+.filter-right-section,
+.filter-center-section,
+.filter-left-section{
+	min-width: 135px;
+	padding: 10px;
+	display: inline-block;
+	text-align: center;
+}
+
+.form-with-margin{
+	margin-right: 15px;
+	text-align: left;
+}
+
+.relations-editor-outline{
+	/* max-height: 500px;
+	overflow: auto; */
+	border: 1px solid #cccccc;
+	padding: 3px;
+	border-radius: 5px;
+}
+
+.table-name-dropdown{
+	max-width: 170px;
+	overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.error-label,
+.input-error-label{
+	color: #a94442;
+    background-color: #f2dede;
+    border: 1px solid #ebccd1;
+    padding: 10px 15px 0px;
+    border-radius: 5px;
+    max-width: 300px;
+    margin: 3px;
+    text-align: left;
+}
+
+#DBMigratorPopup .input-error-label{
+	padding-bottom: 10px;
+}
+
+#homePageMappingViewer .message-section{
+	max-height: 500px;
+	max-width: 900px;
+	overflow: auto;
+}
+
+#homePageMappingViewer thead {
+    background-color: #aaaaaa;
+}
+
+#homePageMappingViewer th{
+	padding: 5px 10px;
+	cursor: pointer;
+}
+
+#homePageMappingViewer td {
+	padding: 3px 10px;
+}
+
+.event-details-form{
+	margin: 0px 25px;
+}
+
+.event-details-form label{
+	min-width: 170px;
+}
+.event-details-form .form-group{
+	margin-bottom: 15px;
+}
+
+.event-details-form .error-label{
+	max-width: 400px;	
+}
+
+.event-details-form .parallel-process-block {
+	border: 1px solid #cccccc;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+.identifier-select-ul {
+	list-style: none;
+}
+.identifier-select-ul li{
+	cursor: pointer;
+}
+
+.identifier-check-label{
+	margin-left: 5px;
+	cursor: pointer;
+}
+
+.db-info-labels{
+	font-weight: normal;
+}
+
+
+h1 {
+    color: blue;
+    font-size: 25px;
+    color: #FFFFFF;
+}
+
+h2{
+	font-size: 15px;
+	color: #FFFFFF;
+}
+
+/* Import JSON Button */
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.home-left-section,
+.home-right-section {
+	float: left;
+	border: 2px solid #999999;
+	border-radius: 10px;
+	margin: 10px 10px 30px;
+	padding: 15px;
+	
+}
+
+.home-left-section{
+	min-width: 200px;
+	width: 20%;
+}
+
+.home-right-section{
+	min-width: 890px;
+	background-color: #00abcc;
+	border: 2px solid #FFFFFF;
+	width: 70%;
+}
+
+.user-icon{
+	padding: 15px 25px;
+	float: left;
+	border: 1px solid #aaaaaa;
+}
+
+.user-info-section{
+	display: inline-block;
+}
+
+.user-actions-section{
+	margin-top: 30px;
+	padding: 10px;
+	text-align: center;
+}
+
+.user-actions-section .btn{
+	width: 100%;
+	min-width: 150px;
+	height: 50px;
+	margin-bottom: 10px;
+}
+
+.home-user-name{
+	font-size: 25px;
+}
+
+.user-info-box{
+	float:left;
+	padding: 10px 20px;
+}
+.home-user-role{
+	font-size: 15px;
+}
+
+.mig-report-table {
+	background-color: #fff;
+    border: 2px solid #257fb1;
+    text-align: center;
+}
+
+.mig-report-table thead > tr >  th{
+	cursor: pointer;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.mig-report-table tbody > tr > td{
+	vertical-align: middle;
+}
+
+.mig-report-table thead{
+	/* background-color: #AAAAAA; */
+}
+
+
+.mig-report-table thead > tr > th.search-icon-th{
+	text-align: left; 
+	color: #cccccc;
+}
+
+.btn-create-migrate-job{
+	padding-top: 13px;
+}
+
+.status-grid-button{
+	min-width: 120px;
+}
+
+.st-sort-ascent:before{
+    content: '\25B2';
+  }
+
+  .st-sort-descent:before{
+    content: '\25BC';
+  }
+  
+  
+  pre{
+  
+  height : 500px;
+  overflow-y: auto;
+  -webkit-user-select: text;
+    -moz-user-select: -moz-text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+  
+  .ui-autocomplete {
+    z-index: 5000;
+}
+
+.md-virtual-repeat-container.md-autocomplete-suggestions-container{
+	z-index: 5000;
+}
+
+.select2-container{
+	z-index: 5000;
+}
+
+.layout, .layout-column, .layout-row{
+	/* display: inline-block; */
+}
+
+.autocomplete-label {
+	float: left;
+    margin-top: 10px;
+    min-width: 80px;
+}
+
+md-autocomplete{
+	max-width: 170px;
+	min-width: 170px;
+}
+
+md-autocomplete input:not(.md-input){
+	max-width: 145px;
+	font-size: 13px;
+	padding: 0 0 0 10px;
+	height: 35px;
+}
+
+md-autocomplete md-autocomplete-wrap{
+	height: 35px;
+}
+
+md-autocomplete button{
+	width: 22px;
+	margin: 0px;
+	vertical-align: top;
+	height: 35px;
+}
+
+md-icon{
+	width: 16px;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+.tbl-rel-waiting-progress {
+	height: 20px;
+}
+
+.status-grid-icon-button {
+	min-height: 35px;
+	min-width: 30px;
+	padding: 5px 10px;
+	border-radius: 20px;
+}
+
+.filledicon,
+.filledicon:hover{
+	color: #00FFFF;
+}
+
+.disable-editor-div{
+	width: 100%;
+	height: 100%;
+	z-index: 5000;
+	position: absolute;
+}
+
+.md-datepicker-calendar-pane.md-pane-open{
+	z-index: 5000;
+}
+
+.tbl-rel-datepicker{
+	display: inline-block;
+	width: 180px;
+	margin-top: 2px;
+}
+
+.tbl-rel-calendar-btn{
+	padding: 9px;
+}
+
+.ng-hide.ng-hide-animate{
+     display: none !important;
+}
+
+.tbl-rel-value-input{
+	margin: 6px 0px;
+	max-width: 180px;
+}
+
+.uib-left, .uib-right{
+	height: 30px;
+    padding-left: 10px;
+    min-width: 30px;
+}
+
+#DBMigratorTableRelationPopup ul.uib-datepicker-popup.dropdown-menu{
+	max-height: initial;
+	overflow: auto;
+	padding: 10px;
+}
+
+.sub-db-info{
+	color: #cccccc;
+}
+
+.db-selection-section h1 {
+	display: inline-block;
+}
+
+
+.home-right-section .nav-pills > li.active > a,
+.home-right-section .nav-pills > li.active > a:focus,
+.home-right-section .nav-pills > li.active > a:hover{
+	color: #ffffff;
+	border-radius: 4px 4px 0 0;
+}
+.home-right-section .nav-pills > li > a,
+.home-right-section .nav-pills > li > a:focus,
+.home-right-section .nav-pills > li > a:hover{
+	color: #333333;
+	font-weight: bold;
+}
+.table-floats-container,
+.columns-floats-container{
+	background-color: #eeeeee;
+	margin: 15px;
+	padding: 10px;
+	border-radius: 5px;
+	border: 1px solid #cccccc;
+}
+
+.table-floats-container .selected {
+	background-color: #245580;
+	color: #ffffff;
+}
+
+.floating-table-name{
+	background-color: #349bd5;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    margin: 5px;
+    padding: 5px 10px;
+    color: #ffffff;
+    border: 1px solid #245580;
+}
+.floating-schema-names,
+.floating-column-names{
+	background-color: #cccccc;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    margin: 5px;
+    padding: 5px 10px;
+    color: #333333;
+    border: 1px solid #444444;
+}
+.floating-table-name:hover{
+	background-color: #245580;
+	color: #FFFFFF;
+}
+
+.no-floating-element-info {
+	border: 1px solid #999999;
+	background-color: #ffffff;
+	color: #999999;
+	cursor: pointer;
+    display: inline-block;
+    margin: 5px;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.floating-identifiers{
+	border: 1px solid #999999;
+	background-color: #ffffff;
+	color: #333333;
+	cursor: pointer;
+    display: inline-block;
+    margin: 5px;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.nullable-selector-container{
+	background-color: #cccccc;
+    border: 1px solid #ffffff;
+    border-radius: 2px;
+    color: #333;
+    display: inline;
+    margin-left: 5px;
+    padding: 3px 5px;
+}
+
+#selectIdentifierPopup{
+	color: #000;
+}
+
+.floating-identifiers:hover{
+	background-color: #cccccc;
+}
+
+.floating-identifiers.selected{
+	background-color: #999999;
+	border: 2px solid #666;
+}
+
+#eventStatusPoup .status-rows label{
+	min-width: 150px;
+}
+
+
+/**
+ * Progress bars with centered text
+ */
+
+#eventStatusPoup .progress {
+    position: relative;
+}
+
+#eventStatusPoup .progress span {
+    position: absolute;
+    display: block;
+    width: 100%;
+    color: #000;
+}
+
+.link-incomplete {
+	color: #fcdb1f;
+	font-weight: bold;
+}
+ 
+.column_data_editor_popup{
+ 	color: #333333;
+}
+
+.column_data_editor_popup .column-details-form {
+	margin: 0px 20px 10px;
+}
+
+.column_data_editor_popup .column-details-form label{
+	min-width: 150px;
+	max-width: 325px;
+	word-wrap: break-word;
+}
+ 
+.column_data_editor_popup .column-details-form label input{
+  margin-right: 10px;
+}
+
+.column_data_editor_popup .column-details-form .form-group{
+	margin-bottom: 15px;
+}
+
+.column_data_editor_popup .column-details-form .column-attribute-data{
+	border: 1px solid #cccccc;
+    border-radius: 5px;
+    padding: 15px;
+    width: 100%;
+}
+
+.more-info-tooltip-icon {
+	cursor: pointer;
+}
+
+.info-icon{
+	margin-left: 5px;
+	color: #dddddd;
+}
+
+.error-icon{
+	color: #c9302c;
+}
+
+.remove-attribs-button {
+	margin-right: -5px;
+    margin-top: -10px;
+}
+
+.show-hide-error-detail{
+	color: #005222;
+    font-weight: normal;
+    text-decoration: underline;
+}
+
+.bordered-section{
+	border: 1px solid #cccccc;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.restart-event-type-section {
+	min-height: 110px;
+	width: 45%;
+	text-align: center;
+	margin-left: 15px;
+}
+
+.restart-event-type-section .btn{
+	margin-bottom: 15px;
+}
+
+.info-text-label{
+	color: #cccccc;
+}
+
+.mapping-grid-buttons-container{
+	min-width: 250px;
+}
+
+#errorDetailsPopup .error-container{
+	max-height: 500px;
+	overflow: auto;
+}
+.debug-icon{
+	color: #245580;
+    text-shadow: 2px 2px #999999;
+    cursor: pointer;
+}
+.debug-icon:hover{
+    text-shadow: 2px 2px #333333;
+    color: #245580;
+}
+
+.debug-container{
+	width: 30px;
+	height: 30px;
+	position: absolute;
+}
+
+/* --------  Admin Page Styles ---------- */
+
+.node-report-table {
+    border: 2px solid #cccccc;
+    text-align: center;
+    background-color: #fff;
+}
+
+.node-report-table thead {
+	background-color: #257fb1;
+	color: #ffffff;
+}
+
+.node-grid-icon-button {
+	min-height: 30px;
+	min-width: 30px;
+	padding: 5px;
+	border-radius: 20px;
+}
+
+.node-report-table thead > tr >  th{
+	cursor: pointer;
+	text-align: center;
+	vertical-align: middle;
+}
+
+/* --------  Admin Page Styles ---------- */
+
+.green-icon {
+	margin-left: 10px;
+	color: #00ffff;
+	cursor: pointer;
+}
+
+/* ----------- REVERSE MIGRATION TEMPORARY STYLES (REMOVE LATER IF NEEDED)------------------------ */
+
+.table-indent-div{
+	display: inline;
+	margin-left: 5px;
+}
+
+.indented-content{
+	float: left;
+	margin: 2px;
+}
+
+.trasnparent-indent{
+	opacity: 0;
+}
+
+/* --------------- END --------------*/
+
+
+.sortable-drag-over {
+	/* background-color: #FF0000; */
+	border-top : 2px solid #000000;
+}
+
+/* Animating div on ng-show and ng-hide for dpecific containers !! */
+
+/* div {
+  transition: all linear 0.5s;
+  background-color: lightblue;
+  height: 100px;
+  width: 100%;
+  position: relative;
+  top: 0;
+  left: 0;
+}
+
+.ng-hide {
+  height: 0;
+  width: 0;
+  background-color: transparent;
+  top:-200px;
+  left: 200px;
+} */
+
+
+
+.node-sub-info-title{
+	float: left;
+	min-width: 200px;
+}
+.node-header{
+	font-size: 17pt;
+    font-weight: bold;
+}
+.admin-page-data-container{
+	
+}
+.expandable-header{
+	
+}
+.node-sub-info{
+	float: left;
+    margin-left: 50px;
+    min-width: 200px;
+}
+.node-sub-expandable-info{
+	font-size: 15pt;
+	margin-left: 10px;
+}
+.node-data-block{
+	 border: 2px solid #fff;
+    border-radius: 5px;
+    color: #fff;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+.node-data-block table{
+    color: #333;
+}
+.node-data-block{
+	 border: 2px solid #fff;
+    border-radius: 5px;
+    color: #fff;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+.expandable-node-sub-title{
+	margin-bottom: 10px;
+    margin-top: 5px;
+    min-width: 50px;
+}
+
+.expand-node-block-btn{
+	margin-top: 5px;
+	color: #FFF;
+    text-shadow: 0 1px 0 #fff;
+    opacity: 0.9;
+}
+
+.admin-page-title{
+	color: #ffffff;
+    font-size: 25px;
+}
+
+.admin-page-refresh-btn{
+	color: white;
+    float: right;
+    margin-top: 5px;
+    /* margin-left: 10px; */
+}
+
+.home-page-refresh-grid-btn{
+	margin-top: 5px;
+    margin-right: 20px;
+    float: right;
+}
+
+.static-refresh-btn{
+	margin-right: 5px;
+}
+
+.static-reload-btn{
+	margin-right: 25px;
+	color: #999999;
+}
+
+.db-assign-page-tabset{
+	min-height: 300px;
+	margin: 20px;
+}
+
+.db-assign-left-section,
+.db-assign-right-section{
+	background-color: #349bd5;
+    border: 2px solid #206e9b;
+    border-radius: 10px;
+    float: left;
+    margin: 10px 10px 30px;
+    min-width: 40%;
+    padding: 15px;
+}
+
+.db-assign-page-tab-content{
+	background-color: #ddd;
+    border: 2px solid #257fb1;
+    border-radius: 0 0 10px 10px;
+    padding: 25px;
+    -webkit-box-shadow: inset 10px 9px 10px -8px rgba(0,0,0,0.75);
+	-moz-box-shadow: inset 10px 9px 10px -8px rgba(0,0,0,0.75);
+	box-shadow: inset 10px 9px 10px -8px rgba(0,0,0,0.75);
+}
+
+.db-select-mongo-block,
+.db-select-orcl-block{
+	border: 2px solid #fff;
+    border-radius: 5px;
+    color: #fff;
+    margin: 20px 0;
+    min-height: 120px;
+    min-width: 350px;
+    padding: 25px;
+}
+
+.db-schema-select-block{
+	border: 2px solid #666;
+    border-radius: 5px;
+    color: #333;
+    margin: 20px 5px;
+    min-height: 120px;
+    max-width: 350px;
+    padding: 25px;
+    min-width: 150px;
+    display: inline-block;
+}
+
+.db-select-mongo-block md-autocomplete input,
+.db-select-orcl-block md-autocomplete input{
+	color: #000;
+}
+	
+
+.db-assign-page-tabset .nav-pills > li:not(.active) > a{
+	background-color: #ddd;
+}
+
+.db-assign-page-tabset .nav-pills > li > a,
+.db-assign-page-tabset .nav-pills > li.active > a{
+	border-radius: 10px 10px 0px 0px;
+}
+
+.db-assign-page-tabset md-autocomplete{
+	min-width: 150px;
+	max-width: 150px;
+	margin: 3px;
+}
+
+.no-schema-selected-info {
+	border: 1px solid #999999;
+	background-color: #ffffff;
+	color: #999999;
+	cursor: pointer;
+    display: inline-block;
+    margin: 5px;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.db-type-selection-dropdown > button{
+	min-width: 150px;
+}
+
+.user-id-input-label{
+	min-width: 150px;
+}
+
+.db-assign-left-section ul,
+.db-assign-right-section ul {
+    list-style: none;
+    padding-left: 10px;
+}
+
+.expression-sub-info{
+	color: #cccccc;
+}
+
+.data-editor-warning-label{
+	color: #cb8e8d;
+}

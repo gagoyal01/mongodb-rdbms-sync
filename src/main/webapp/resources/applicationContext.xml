@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd">
+
+	<context:annotation-config />
+	<!-- Added for LAE -->
+	<mvc:default-servlet-handler />
+	<bean id="ds"
+		class="oracle.jdbc.pool.OracleDataSource">		
+		<property name="URL" value="#TNS-STRING#" /><!-- Replace with correct TNS entry for your db -->
+		<property name="user" value="#USERNAME#" /><!-- Username for your db -->
+		<property name="connectionCachingEnabled" value="true" />
+		<property name="connectionCacheProperties">
+            <props> 
+                <prop key="maxActive">30</prop> 
+                <prop key="initialSize">2</prop> 
+                <prop key="maxIdle">2</prop> 
+                <prop key="minIdle">2</prop> 
+                <prop key="maxWait">20000</prop>
+                <prop key="jmxEnabled">true</prop> 
+                <prop key="factory">oracle.jdbc.pool.OracleDataSourceFactory</prop> 
+                <prop key="validationQuery">select 1 from dual</prop> 
+                <prop key="testOnBorrow">true</prop>
+				<prop key="logAbandoned">true</prop> 
+                <prop key="testOnConnect">true</prop> 
+                <prop key="suspectTimeout">300</prop> 
+                <prop key="accessToUnderlyingConnectionAllowed">true</prop>
+				<prop key="removeAbandoned">true</prop> 
+                <prop key="removeAbandonedTimeout">1800</prop> 
+                <prop key="timeBetweenEvictionRunsMillis">180000</prop> 
+                <prop key="minEvictableIdleTimeMillis">180000</prop>
+				<prop key="validationInterval">200</prop> 
+                <prop key="initSQL">select 1 from dual</prop>
+            </props> 
+        </property>
+	</bean>  
+	
+	<bean id="#DBNAME#" class="org.springframework.jdbc.core.JdbcTemplate" lazy-init="true"> <!-- Replace with your DBname -->
+		<property name="dataSource">
+			<ref bean="ds" />
+		</property>
+	</bean>
+
+	<bean id="applicationContextProvder"
+		class="com.cisco.app.dbmigrator.migratorapp.config.ApplicationContextProvider"/>
+</beans>

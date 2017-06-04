@@ -1,0 +1,366 @@
+<div ng-controller="dbMigratePageReverseController">
+	<div class="db-migration-page">
+		<div class="db-migration-section">
+			<div ng-controller="dbRevereseSourceSection"> <!--  -->
+				<h1>{{source.title}} :</h1>
+				<hr />
+				<h2>Database name : {{jsUserData.NewData.sourceDbName}}
+					&nbsp;&nbsp;|&nbsp;&nbsp; Schema name : {{jsUserData.NewData.sourceSchemaName}}</h2>
+				<hr />
+				<form class="form-inline">
+					<div class="form-group">
+						<button class="btn btn-primary" type="submit" ng-click="selectMappingPopup()">Select Structure</button>
+					</div>
+				</form>
+				<div ng-include="'select_mapping_popup.html'"></div>
+				<div class="database-collection-list-main">
+					<ul>
+						<li class="collection-name" ng-include="'source_collection_instance_renderer.html'" ng-repeat="element in collections">
+						</li>
+					</ul>
+				</div>
+			</div>
+			<br>
+		</div>
+
+		<div class="db-migration-section">
+			<div ng-controller="dbReverseTargetSection"> <!--  -->
+				<h1>{{target.title}} :</h1>
+				<hr />
+				<h2>Database name : {{jsUserData.NewData.targetDbName}}
+					&nbsp;&nbsp;|&nbsp;&nbsp; Schema name : {{jsUserData.NewData.targetSchemaName}}</h2>
+				<hr />
+				<form class="form-inline">
+					<div class="form-group">
+						<button class="btn btn-primary" ng-disabled="true" type="submit" ng-click="addNewTable()" title="Add New Table to Group">+ Add New Table in Group</button>
+					</div>
+				</form>
+				<div class="database-collection-list-main">
+					<!-- {{target.selectedSchema}} <span class="caret"></span>  -->
+					<div ng-include="'target_column_data_editor.html'"></div>
+					<div  class="checkbox null-value-checkbox">
+					    <ul>
+							<li ng-include="'target_node_group_instance_renderer.html'" ng-repeat="nodeGroup in nodeTableGroup"></li>
+						</ul>
+					  </div>
+				</div>
+				
+				<!-- Modal that will add table -->
+
+				<div class="modal fade" id="AddTableToGroupPopup" tabindex="-1" data-backdrop="static" role="dialog" aria-labelledby="myModalLabel" ng-controller="dbAddTableSection"> 
+					<div class="modal-dialog modal-lg" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button> <!--  Close x button on top right -->
+								<h4 class="modal-title">Add table to group</h4>
+							</div>
+							<div class="modal-body">
+								<div class="message-section">
+									<form class="form-inline" ng-hide="fetchingColumns">
+										<div class="form-group">
+											<Label>Search for table : </Label>
+											<input class="form-control" ng-model="searchString" placeholder="Search table name">
+											<button class="btn btn-primary" type="submit" ng-click="searchTables()">Find</button>
+										</div>
+									</form>
+									<label ng-show="fetchingColumns">Adding table <span ng-repeat="table in addTables">{{table}}&nbsp;&nbsp;</span> and fetching columns.....</label>
+									<hr>
+									<div class="progress" ng-show="fetchingData || fetchingColumns"><div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">Loading.... Please Wait !!</div></div>
+									<div ng-show="noTableFound"><label >No match found... !!</label><br><br></div>
+									<div ng-show="fetchedTables.length"><label>Select any table from below: </label><br></div>
+									<div ng-show="fetchedTables.length" class="table-floats-container">
+										<label ng-show="noTableFound">No match found... !!</label>
+										<div ng-repeat="table in fetchedTables" class="floating-table-name" ng-class="{selected : table.selected}" ng-click="selectTable(table)">{{table.tableName}}</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" ng-disabled="fetchingColumns" class="btn btn-primary" ng-click="loadSelectedTables()">Add Tables</button> <!-- ng-click="AddTableToGroup()" -->
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<br>
+		</div>
+		<div class="final-submit-section">
+			<button class="btn btn-primary btn-final-submit" type="submit" ng-click="showMigrateJSON()" title="Show Migrate JSON"><i class="fa fa-lg fa-code"></i>&nbsp;Java JSON</button>
+			<!--  <button class="btn btn-primary btn-final-submit" type="submit" ng-click="showExportJSON()" title="Show Export JSON"><i class="fa fa-lg fa-code"></i>&nbsp;Export JSON</button> -->
+			<button class="btn btn-primary btn-final-submit" type="submit" ng-click="OnMigrate()">Save Mapping</button>
+		</div>
+	</div>
+</div>
+
+<script type="text/ng-template" id="source_collection_instance_renderer.html" >	
+	<div ng-controller="dbSourceCollectionInstanceController" class="mongo-collection-instance">	
+		<div>
+			<span class="subtree-node-path">¦--</span>
+			<span ng-hide="collectionRename"><span ng-click="toggleExpansion()">
+					<i class="fa fa-lg fa-folder-open-o" ng-show="isExpanded"></i>
+					<i class="fa fa-lg fa-folder" ng-hide="isExpanded"></i>
+				</span>&nbsp;
+				{{element.attributeName}}
+				<i class="fa fa-lg fa-plus-square-o" ng-hide="element.isChildNode" ng-click="explandAll()"></i>
+				
+			</span>
+		</div>
+		<div class="collection-elements-subdiv" ng-show="isExpanded">
+			<ul>
+				<li ng-repeat="element in element.attrs" ng-hide="isEditing" ng-include="getNodeTemplate(element)">
+				</li>
+			</ul>
+	 	</div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="source_collection_end_node.html">	
+	<div ng-controller="dbMongoAttributeNode" class="end-node-block">
+		<span class="subtree-node-path">¦--
+			<span class="file-tree-plus-btn" ng-click="toggleExpansion()">
+				<span class="plus-sign" ng-hide="isExpanded">+</span>
+				<span class="minus-sign" ng-show="isExpanded">‒</span>
+			</span>
+		</span>
+		<i class="fa fa-file-o"></i>&nbsp;
+		<draggable-text xfer-data='{"type":"{{element.attributeType}}", "dragType":"attributeDrag" , "isIdentifier": "{{element.isIdentifier}}", "name": "{{element.attributeName}}", "collection":"{{element.parentCollection}}"}' elem-label="{{element.attributeName}}" title="Drag on column to relate">{{element.attributeName}}</draggable-text> 
+		<!-- <span title="Type: {{element.type}}">{{element.attributeName}}</span>&nbsp;&nbsp; -->
+		<span ng-show="isExpanded" class="subnode-elem">¦---{{::element.attributeType}}</span>
+	</div>
+</script>
+
+<script type="text/ng-template" id="target_table_column_tree_renderer.html">
+	<div ng-controller="DBTargetTableTreeController">
+		<div sortable-drop-area callbackfn="addTableOnTop"><span class="file-tree-plus-btn" ng-click="getColumns(data, true)">
+			<span class="plus-sign" ng-hide="data.showtree">+</span>
+			<span class="minus-sign" ng-show="data.showtree">‒</span>
+		</span>
+		<!-- <span>{{data.tableIndex}}</span> -->
+		<i class="fa fa-table"></i>&nbsp;&nbsp;<draggable-text elem-label="{{data.name}}" xfer-data='{"type":"nodeTableDrag", "tableName": "{{::data.name}}", "nodeName": "{{nodeGroup.nodeName}}" }'></draggable-text> 
+		<i class=" clickable-el fa fa-lg fa-times-circle remove-attrib" ng-click="removeTable(data)" title="Clear Collection"></i>
+		<i class=" clickable-el fa fa-lg fa-list" ng-click="selectKeyColumns()" ng-class="{filledicon : checkKeyColumns()}" title="Select key Columns"></i>
+		</div>
+		<ul class="db-tree-ul" ng-show="data.showtree">
+			<li ng-show="!data.nodes.length">
+				<span class="subtree-node-path">¦-- No Columns
+			</li>
+	      		<li class="db-tree-li" ng-repeat="node in data.nodes" ng-controller="dbTargetColumnAttributeNode">
+				
+				<span class="subtree-node-path">¦--
+				<span class="file-tree-plus-btn" ng-click="toggleExpansion()">
+					<span class="plus-sign" ng-hide="isExpanded">+</span>
+					<span class="minus-sign" ng-show="isExpanded">‒</span>
+				</span>
+				</span>
+				<i class="fa fa-columns" ng-hide="!isAttributeDefined(true)"></i> 
+				<i class="fa fa-exclamation-circle link-incomplete" ng-show="!isAttributeDefined(true)"></i> 
+				<span droppable-area callbackfn="dropAttribute" ng-class="{'link-incomplete': !isAttributeDefined(true)}">{{::node.columnName}}</span>
+				<i class="fa fa-exclamation-triangle clickable-el error-icon" ng-show="!isAttributeDefined()" title="null not allowed" ng-click="editColumnConfig(node)" aria-hidden="true"></i>
+				<i class="fa fa-lg fa-pencil-square-o clickable-el" title="Edit" ng-click="editColumnConfig(node)"></i>
+				<i class="fa fa-lg fa-link info-icon" ng-show="node.attrData" title="This column is linked to attribute" aria-hidden="true"></i>
+				<i class="fa fa-lg fa-tag info-icon" ng-show="node.isSeqGenerated" title="This column has sequence defined" aria-hidden="true"></i>
+				<i class="fa fa-file-text-o info-icon" ng-show="node.defaultValue" title="This column has assigned default value : {{node.defaultValue}}" aria-hidden="true"></i>
+				<i class="fa fa-lg fa-key info-icon" ng-show="node.isKeyColumn" title="This is Key Column" aria-hidden="true"></i>
+				<span ng-show="isExpanded" class="subnode-elem">¦---{{::node.columnType}}</span>
+			</li>
+		</ul>
+		<div ng-include="'select_key_columns_popup.html'"></div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="target_node_group_instance_renderer.html" >	
+	<div ng-controller="dbTargetCollectionTablesInstanceController" ng-show="isDataToShow()" class="mongo-collection-instance">	
+		<div sortable-drop-area callbackfn="addNodeOnTop">
+			<span class="subtree-node-path">¦--</span>
+			<span ><span ng-click="toggleExpansion()">
+					<i class="fa fa-lg fa-folder-open-o" ng-show="isExpanded"></i>
+					<i class="fa fa-lg fa-folder" ng-hide="isExpanded"></i>
+				</span>&nbsp;
+				<draggable-text elem-label="{{::nodeGroup.nodeName}}" xfer-data='{"type":"nodeDrag", "nodeName": "{{::nodeGroup.nodeName}}", "parentNode": "{{::nodeGroup.parentNodeName}}" }'></draggable-text> 
+				&nbsp;&nbsp;<i class="fa fa-lg fa-trash-o" ng-click="removeNode(nodeGroup)" ng-hide="isRootNode()" title="Remove this node"></i><i class="fa fa-lg fa-plus-square-o" ng-show="isRootNode()" ng-click="expandAll(nodeGroup)" title="Expand all nodes"></i>
+			</span>
+		</div>
+		<div class="collection-elements-subdiv" ng-show="isExpanded">
+			<ul>
+				<li ng-repeat="data in nodeGroup.tables" ng-include="'target_table_column_tree_renderer.html'" ></li>
+				<li ng-repeat="nodeGroup in nodeGroup.childNodes" ng-include="'target_node_group_instance_renderer.html'" ></li>
+			</ul>
+	 	</div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="target_collection_instance_renderer.html" >	
+	<div ng-controller="dbCollectionInstanceController" class="mongo-collection-instance">	
+		<div>
+			<span class="subtree-node-path">¦--</span>
+			<span ng-hide="collectionRename"><span ng-click="toggleExpansion()">
+					<i class="fa fa-lg fa-folder-open-o" ng-show="isExpanded"></i>
+					<i class="fa fa-lg fa-folder" ng-hide="isExpanded"></i>
+				</span>&nbsp;
+				{{element.nodeName}}
+				<i class=" clickable-el fa fa-lg fa-times-circle remove-attrib clickable-el" ng-click="clearAllAttribs(element)" title="Clear Collection"></i>
+			</span>
+			<div class="inline-div-container collection-rename-form" ng-show="collectionRename" ng-include="'collection_rename_form.html'"></div>
+		</div>
+		<div class="collection-elements-subdiv" ng-show="isExpanded">
+			<div droppable-area callbackfn="dropTableColumnName" class="column-drop-area collection-{{element.name}}" > Drag Column/Table here to Create Attribute/Collection
+				<i class="fa fa-plus-circle fa-lg clickable-el add-subcollection-btn" title="Add a sub collection" ng-click="AddSubCollection()"></i>
+				<i class="fa fa-arrow-circle-o-down fa-lg clickable-el add-subcollection-btn" title="Add a new attribute" ng-click="AddBlankAttribute()"></i>
+			</div>
+			<ul>
+				<li ng-repeat="element in element.attrs" ng-hide="isEditing" ng-include="getNodeTemplate(element)">
+				</li>
+			</ul>
+	 	</div> 
+		<div ng-if="isParentNode" ng-include="'select_identifier_popup.html'"></div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="select_mapping_popup.html">
+	<div class="modal fade" id="selectMappingPopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" ng-controller="dbSelectMappingSection"> 
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button> <!--  Close x button on top right -->
+					<h4 class="modal-title">Select mapping to load : </h4>
+				</div>
+				<div class="modal-body">
+					<div class="message-section">
+						<!-- <form class="form-inline" ng-hide="fetchingColumns">
+							<div class="form-group">
+								<Label>Search for Mapping : </Label>
+								<input class="form-control" ng-model="searchString" placeholder="Search table name">
+								<button class="btn btn-primary" type="submit" ng-click="searchMappings()">Find</button>
+							</div>
+						</form> -->
+						<hr>
+						<label ng-show="fetchingMappingData">Loading {{mapNameToLoad}} Data.....</label>
+						<div class="progress" ng-show="fetchingMappingData"><div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">Loading.... Please Wait !!</div></div>
+						<div ng-hide="fetchingMappingData">
+							<div ng-hide="userMappings.length || mapToLoad"><label >No Mappings found... !!</label><br><br></div>
+							<div ng-show="userMappings.length && !mapToLoad"><label>Select any Mapping from below: </label><br></div>
+							<div ng-show="userMappings.length && mapToLoad"><label>How do you want to load Mapping : </label><br></div>
+							<div ng-show="userMappings.length && !mapToLoad" class="table-floats-container">
+								<label ng-show="noTableFound">No match found... !!</label>
+								<div ng-repeat="mapping in userMappings" ng-click="selectMapping(mapping)" class="floating-table-name">{{mapping.mapName}}</div>
+							</div>
+							<div ng-show="mapToLoad" class="table-floats-container">
+								<button type="button" class="btn btn-primary" ng-click="LoadMapping(true)">Auto Generate Map</button> &nbsp;&nbsp;OR&nbsp;&nbsp;
+								<button type="button" class="btn btn-primary" ng-click="LoadMapping(false)">Load Mapping Only</button>
+							</div><br>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="resetPopup()">Cancel</button> <!-- ng-click="AddTableToGroup()" -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="target_column_data_editor.html">
+	<div class="modal fade column_data_editor_popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" ng-controller="targetColumnDataEditor"> 
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button> <!--  Close x button on top right -->
+					<h4 class="modal-title">Edit Column Data</h4>
+				</div>
+				<div class="modal-body" >
+					<div class="message-section column-details-form">
+					<div class="error-label" ng-show="currentEditingColumn.errors.length" >
+						<ul>
+						 	<li ng-repeat="error in currentEditingColumn.errors">{{error}}</li>
+						</ul>
+					</div><br>
+					<form class="form-inline">
+						<div class="form-group">
+							<label>Column Name : </label><label>{{currentEditingColumn.columnName}}</label> 
+						</div><br>
+						<div class="form-group">
+							<label><input ng-model="currentEditingColumn.isNullable" type="checkbox" disabled>Null Allowed</label> 
+							<label><input ng-model="currentEditingColumn.isSeqGenerated" ng-click="currentEditingColumn.isKeyColumn = false" type="checkbox">Sequence Generated<span ng-show="currentEditingColumn.isKeyColumn" class="data-editor-warning-label">*</span></label><br>
+							<span ng-show="currentEditingColumn.isKeyColumn" class="data-editor-warning-label">[ *Note : If sequence is assigned to Column it will no longer be KeyColumn. ]</span>
+						</div><br>
+						<div ng-show="currentEditingColumn.fetchingData">
+							<div class="progress"><div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">Loading.... Please Wait !!</div></div>
+						</div>
+						<div class="form-group" ng-hide="!currentEditingColumn.isSeqGenerated">
+							<label class="autocomplete-label">Sequence Name : </label> 
+				             <div ng-controller="autoCompleteColumnCtrlSimple as ctrl" layout="column" class="inline-div-container" ng-include="'tpl-autocomplete-dropdown-label'" ng-cloak> </div> 
+							<br>
+						</div>
+						<div class="form-group" ng-hide="currentEditingColumn.isSeqGenerated">
+							<label>Default Value : </label> 
+							<input class="form-control" ng-model="currentEditingColumn.defaultValue" type="text"/> 
+						</div><br>
+						<div ng-hide="!currentEditingColumn.attrData || currentEditingColumn.isSeqGenerated">
+							<div class="form-group"><label>Linked Attribute : </label></div><br>
+							<div class="form-group column-attribute-data">
+								<button type="button" class="close remove-attribs-button" ng-click="removeAttribData()" aria-label="Close"> <span aria-hidden="true">&times;</span></button>
+								<label>Attribute : </label><label>{{currentEditingColumn.attrData.attributeName}}</label> <br>
+								<label>Collection : </label><label>{{currentEditingColumn.attrData.collectionName}}</label> <br>
+							</div>
+						</div>
+						<div>
+							<div class="form-group"><label>Replacement Map: </label></div><br>
+							<div class="form-group column-attribute-data" ng-repeat="map in currentEditingColumn.replacementMap">
+								<div class="form-group"><label>Key : </label><input class="form-control" ng-model="map.replaceKeyName" type="text"/></div><br>
+								<div><label>Value : </label><input class="form-control" ng-model="map.replaceKeyValue" type="text"/></div>
+							</div>
+							<div class="form-group">
+								<button ng-hide="currentEditingColumn.replacementMap.length" type="button" class="btn btn-primary" ng-click="addReplaceMap()">Add replacement map</button>
+								<button ng-show="currentEditingColumn.replacementMap.length" type="button" class="btn btn-primary" ng-click="addReplaceMap()">Add more</button>
+							</div>
+						</div>
+						<!-- <label ng-hide="currentEditingColumn.attrData || currentEditingColumn.isSeqGenerated">( No attribute linked to the column yet )</label<br> -->
+					</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" ng-click="saveChanges()">OK</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="select_key_columns_popup.html">	
+	<div class="modal fade" id="selectKeyColumnsPopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-controller="selectKeyColumnController"> 
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button> <!--  Close x button on top right -->
+					<h4 class="modal-title">Select the Key Columns</h4>
+				</div>
+				<div class="modal-body">
+					<div class="message-section">
+						<div><label>Click on column name to set as Key Column and click on checkbox for allowing <i>null</i> value : </label><br></div> 
+						<div class="table-floats-container">
+							<div ng-repeat="node in data.nodes" ng-show="(node.isParentAttribute || node.rootNodeColumn) && !node.isSeqGenerated" ng-click="selectKeyColumn(node)" class="floating-identifiers" ng-class="{selected: node.isKeyColumn}">
+								{{::node.columnName}}
+								<div class="nullable-selector-container" ng-show="node.isKeyColumn"><label><input ng-click="setAllowNullKeyColumn($event, node)" type="checkbox">Nullable</label> </div>
+							</div>
+
+							<div ng-show="!hasValidKeyColumn()" class="no-floating-element-info">
+								<i class="fa fa-exclamation-circle" aria-hidden="true"></i>&nbsp;No Valid Column
+							</div>
+
+							<!-- Implementing new multiple Select component  IN PROGRESS -->
+							<!-- <div ng-repeat="node in data.nodes" ng-click="selectKeyColumn(node)" ng-show="node.isKeyColumn" class="floating-identifiers" ng-class="{selected: node.isKeyColumn}">
+								{{node.columnName}}
+								<div class="nullable-selector-container" ng-show="node.isKeyColumn"><label><input ng-click="setAllowNullKeyColumn($event, node)" type="checkbox">Nullable</label> </div>
+							</div
+							<div class="floating-identifiers key-column-search-field" ng-controller="customAutoCompleteColumnCtrl as ctrl" layout="column" class="inline-div-container" ng-include="'custom-tpl-autocomplete-dropdown'" ng-cloak> </div> -->
+
+
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>

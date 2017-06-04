@@ -1,0 +1,40 @@
+
+<div ng-controller="dbSelectionController">
+	<div class="db-selection-page">
+      		<div class="db-selection-section" ng-repeat="section in sections">
+      			<div ng-controller="dbSelectionControllerSection">
+       			<h1>{{section.title}} : </h1>&nbsp;&nbsp;<label class="sub-db-info">[ {{section.dbType  === "Oracle" ? "RDBMS" : "Mongo"}} ]</label><hr />
+				<label>Database :</label>
+				<div class="dropdown db-select db-type-selection-dropdown">
+				  <button class="btn btn-default dropdown-toggle" type="button" id="loadDBConfig" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				    {{ section.selectedDBName || "select"}}&nbsp;&nbsp;
+				    <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu" aria-labelledby="loadDBConfig">
+				  	<li ng-repeat="item in dbs">
+				  		<a ng-click="dbTypeSelected(item)">{{item}}</a>
+				  	</li>
+				  </ul>
+				</div>
+				<br/>
+				<label>Schema :</label>
+				<div class="dropdown schema-select db-type-selection-dropdown">
+				  <button class="btn btn-default dropdown-toggle" ng-disabled="!section.selectedDBName" type="button" id="loadSchema" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				    {{ section.selectedDBSchema  || "select"}}&nbsp;&nbsp;
+				    <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu" aria-labelledby="loadSchema">
+				  	<li ng-repeat="item in schemas">
+				  		<a ng-click="dbSchemaSelected(item)">{{item}}</a>
+				  	</li>
+				  </ul>
+				</div>
+
+      			</div>
+      			<br>
+      		</div>
+      		<div class="final-submit-section">
+      			<button class="btn btn-primary btn-final-submit" type="submit" ng-click="onContinue()">Continue</button>
+      		</div>
+      	</div>
+</div>

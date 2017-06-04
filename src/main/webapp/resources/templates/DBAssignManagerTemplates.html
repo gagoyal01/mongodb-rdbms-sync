@@ -1,0 +1,153 @@
+<div ng-controller="DBAssignManagerController">
+	<uib-tabset type="pills" active="activeJustified" class="db-assign-page-tabset" justified="true">
+	    <uib-tab index="0" heading="Assign DB">
+			<form class="form-inline db-assign-page-tab-content">
+				<div class="form-group">
+					<label class="user-id-input-label">User ID : </label> 
+					<input ng-model="currentEdit.userInputId" type="text" class="form-control"/>
+					<button class="btn btn-primary" type="submit" ng-click="loadUserData()">Load</button>
+				</div><br><br>
+				<div class="form-group">
+					<label> Current permisions <span ng-show="currentUserData.userid"> for {{currentUserData.userid}}</span> :</label><br>
+					<div class="db-assign-left-section">
+						<h1>RDBMS</h1>
+						<div class="db-select-orcl-block" >
+							<div ng-repeat="(key,val) in currentUserData.sourceDbMap" ng-include="'database_schema_tree_renderer.html'"></div>
+						</div>
+						<button ng-disabled="!currentUserData.userid" class="btn btn-default" type="submit" ng-click="addOrclBox()">Add +</button>
+						<div ng-include="'add_db_schema_popup.html'"></div>
+					</div>
+					<div class="db-assign-right-section">
+						<h1>Mongo</h1>
+						<div class="db-select-mongo-block">
+							 <div ng-repeat="(key,val) in currentUserData.targetDbMap" ng-include="'database_schema_tree_renderer.html'"></div>
+						</div>
+						<button ng-disabled="!currentUserData.userid" class="btn btn-default" type="submit" ng-click="addMongoBox()">Add +</button>
+					</div>
+				</div><br>
+			</form>
+		</uib-tab>
+	    <uib-tab index="1" heading="Add DB">
+			<form class="form-inline db-assign-page-tab-content" ng-controller="DBCreateConnectionController">
+				<div class="form-group">
+					<label>DB Name : </label> 
+					<input ng-model="newConectionData.dbName" type="text" class="form-control"/>
+				</div>
+				<div class="final-submit-section">
+					<button class="btn btn-primary btn-final-submit" type="submit" ng-click="testConnection()">Test Connection</button>
+					<button class="btn btn-primary btn-final-submit" type="submit" ng-click="SaveConnection()">Add to Connections</button>
+				</div>
+			</form>
+		</uib-tab>
+  	</uib-tabset>
+</div>
+
+
+<script type="text/ng-template" id="add_db_schema_popup.html">
+	<div class="modal fade" id="addDbAndSchemaPopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static"> 
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button> <!--  Close x button on top right -->
+					<h4 class="modal-title">Assign {{newAssignData.type}} Database to {{currentUserData.userid}} : </h4>
+				</div>
+				<div class="modal-body">
+					<div class="message-section">
+						<div class="db-schema-select-block" ng-repeat="currentData in newAssignData.dbData" ng-controller="DBAssignBlockController"> <!--  -->
+							<div class="error-label" ng-show="currentData.errors" >
+								<ul>
+									<li ng-repeat="error in currentData.errors">{{error}}</li>
+								</ul>
+							</div>
+							<label>Database :</label>
+							<div class="dropdown db-select db-type-selection-dropdown">
+							  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							    {{ currentData.dbName || "select"}}&nbsp;&nbsp;
+							    <span class="caret"></span>
+							  </button>
+							  <ul class="dropdown-menu" aria-labelledby="loadDBConfig">
+							  	<li ng-repeat="item in newAssignData.loadedList">
+							  		<a ng-click="currentData.dbName = item.dbName; updateSchemas(item.userNames)">{{item.dbName}}</a>
+							  	</li>
+							  </ul>
+							</div><br>
+						
+							<label class="autocomplete-label">Schemas : </label> 
+							<div ng-controller="autoCompleteColumnCtrlSimple as ctrl" layout="column" class="inline-div-container" ng-include="'tpl-autocomplete-dropdown-label'" ng-cloak> </div>
+							<br>
+							<div class="columns-floats-container">
+								<div ng-repeat="schema in currentData.schemas" class="floating-schema-names">
+									{{schema}}&nbsp;&nbsp;
+								<button type="button" class="close" ng-click="removeSchema(schema)" aria-label="Close"> <span aria-hidden="true">&times;</span></button></div>
+								<div ng-hide="currentData.schemas.length" class="no-schema-selected-info">
+									<i class="fa fa-exclamation-circle" aria-hidden="true"></i>&nbsp;No schema selected
+								</div>
+							</div>
+						</div><br>
+						<button type="button" class="btn btn-primary" ng-click="addMoreBlock()">ADD More</button>
+					</div>
+				</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal">CANCEL</button>
+						<button type="button" class="btn btn-primary" ng-click="addDBToUser()">DONE</button> <!-- ng-click="AddTableToGroup()" -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="oracle-db-select-box.html">	
+	
+</script>
+
+<script type="text/ng-template" id="mongo-db-select-box.html">	
+	<div class="error-label" ng-show="dbData.errors" >
+		<ul>
+			<li ng-repeat="error in dbData.errors">{{error}}</li>
+		</ul>
+	</div>
+	<label>Database :</label>
+	<div class="dropdown db-select db-type-selection-dropdown">
+	  <button class="btn btn-default dropdown-toggle" type="button" id="loadDBConfig" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+	    {{ dbData.dbName || "select"}}&nbsp;&nbsp;
+	    <span class="caret"></span>
+	  </button>
+	  <ul class="dropdown-menu" aria-labelledby="loadDBConfig">
+	  	<li ng-repeat="item in mongoDbList">
+	  		<a ng-click="dbData.dbName = item.dbName; updateSchemas(item.userNames)">{{item.dbName}}</a>
+	  	</li>
+	  </ul>
+	</div><br>
+
+	<label class="autocomplete-label">Schemas : </label> 
+	<div ng-controller="autoCompleteColumnCtrlSimple as ctrl" layout="column" class="inline-div-container" ng-include="'tpl-autocomplete-dropdown-label'" ng-cloak> </div>
+	<br>
+	<div class="columns-floats-container">
+		<div ng-repeat="schema in dbData.schemas" class="floating-schema-names">
+			{{schema}}&nbsp;&nbsp;
+		<button type="button" class="close" ng-click="removeSchema(schema)" aria-label="Close"> <span aria-hidden="true">&times;</span></button></div>
+
+		<div ng-hide="dbData.schemas.length" class="no-schema-selected-info">
+			<i class="fa fa-exclamation-circle" aria-hidden="true"></i>&nbsp;No schema selected</div>
+		</div>
+</script>
+
+<script type="text/ng-template" id="database_schema_tree_renderer.html">
+	<span class="file-tree-plus-btn" ng-click="data.showtree = !data.showtree;">
+		<span class="plus-sign" ng-hide="data.showtree">+</span>
+		<span class="minus-sign" ng-show="data.showtree">‒</span>
+	</span>
+	<i class="fa fa-database"></i>&nbsp;<span>{{key}}</span> 
+	<ul class="db-tree-ul" ng-show="data.showtree">
+		<li ng-show="!val.length">
+			<span class="subtree-node-path">¦-- No Schema assigned</span>
+		</li>
+      	<li class="db-tree-li" ng-repeat="schema in val">
+			<span class="subtree-node-path"> ¦--
+			</span>
+			<i class="fa fa-sitemap" ></i>&nbsp;
+			<span>{{schema}}</span>
+		</li>
+	</ul>
+</script>
