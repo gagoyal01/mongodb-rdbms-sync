@@ -122,7 +122,7 @@ https://www.mongodb.com/mongodb-3.2
   
         db.createCollection("SyncUserDetail");
 
-        db.SyncUserDetail.insert({"_id" : "<your User ID>", "sourceDbMap" : {"<RDBMS DB Name>" : [  "<RDBMS DB    user>" ]}, "targetDbMap" : {"<RDBMS DB Name>" : [ "<RDBMS DB user>" ]}, "roles" : ["USER","APPOVER"], "team" : "ADMIN"})
+        db.SyncUserDetail.insert({"_id" : "<your User ID>", "sourceDbMap" : {"<RDBMS DB Name>" : [  "<RDBMS DB Username>" ]}, "targetDbMap" : {"<Mongo DB Name>" : [ "<Mongo DB Username>" ]}, "roles" : ["USER","APPOVER"], "team" : "ADMIN"})
 
         db.createCollection("SyncConnectionInfo");
 
