@@ -120,23 +120,23 @@ https://www.mongodb.com/mongodb-3.2
 
     e) Now in shell execute the below commands:
   
-        db.createCollection(“SyncUserDetail”);
+        db.createCollection("SyncUserDetail");
 
-        db.SyncUserDetail.insert({"_id" : "<your User ID>" "sourceDbMap" : {"<DB Name>" : [  "<DB    user>" ]}, "targetDbMap" : {"<DB Name>" : [ "<DB user>" ]}, "roles" : ["USER","APPOVER"], "team" : "ADMIN"})
+        db.SyncUserDetail.insert({"_id" : "<your User ID>", "sourceDbMap" : {"<RDBMS DB Name>" : [  "<RDBMS DB    user>" ]}, "targetDbMap" : {"<RDBMS DB Name>" : [ "<RDBMS DB user>" ]}, "roles" : ["USER","APPOVER"], "team" : "ADMIN"})
 
-        db.createCollection(“SyncConnectionInfo”);
+        db.createCollection("SyncConnectionInfo");
 
-        db.SyncConnectionInfo.insert({"dbName" : "<Mongo DB Name>","userName" : "<Mongo DB Username>","password" : "<password>" "hostToPortMap" : [{"host" : "<mongo host>","port" : <mongo port>}],  "dbType" : "Mongo"})
+        db.SyncConnectionInfo.insert({"dbName" : "<Mongo DB Name>","userName" : "<Mongo DB Username>","password" : "<password>", "hostToPortMap" : [{"host" : "<mongo host>","port" : <mongo port>}],  "dbType" : "Mongo"})
 
-        db.SyncConnectionInfo.insert(  {"dbName" : "<Oracle DB name>","userName" : "<Oracle Username>","password" : "<password>"})
+        db.SyncConnectionInfo.insert(  {"dbName" : "<RDBMS DB name>","userName" : "<RDBMS Username>","password" : "<password>"})
 
-        db.createCollection(“SyncNodeMapping”)
+        db.createCollection("SyncNodeMapping")
 
-        db.SyncNodeMapping.insert({"host" : "<Computer name>","node" : "local","state" : "AVAILABLE""concurrencyLevel" : 10, "usedHeapSize" : NumberLong(253755392), "activeEvents" : [], "eventTypes" : ["OrclToMongo",   "MongoToOrcl","MongoToOrclSync", "OrclToMongoSync", "OrclToMongoGridFs"], "systemEvents" : [],"appId" : "local","lastPingTime" : NumberLong(1495199702910) });
+        db.SyncNodeMapping.insert({"host" : "<Computer name>","node" : "local","state" : "AVAILABLE", "concurrencyLevel" : 10, "usedHeapSize" : NumberLong(253755392), "activeEvents" : [], "eventTypes" : ["OrclToMongo",   "MongoToOrcl","MongoToOrclSync", "OrclToMongoSync", "OrclToMongoGridFs"], "systemEvents" : [],"appId" : "local","lastPingTime" : NumberLong(1495199702910) });
 
-        db.createCollection(“SyncEvents”);
+        db.createCollection("SyncEvents")
 
-        db.createCollection(“SyncMappings”);
+        db.createCollection("SyncMappings")
 
 6.	Now paste the CiscoSync.war file in C:\Program Files\Apache Software Foundation\Tomcat 7.0\webapps folder.
 
