@@ -16,3 +16,6 @@ This product is built for bi-directional data migration between MongoDB & RDBMS 
 * Admin module to add new databases & provide access.
 * Batch select/insert, to significantly improve performance.
 * Using OpLog for reading data from MongoDB instead of querying the database.
+
+
+Demo: https://www.slideshare.net/mongodb/transforming-a-large-missioncritical-ecommerce-platform-from-a-relational-architecture-to-mongodb
